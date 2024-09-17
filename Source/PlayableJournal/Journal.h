@@ -51,5 +51,27 @@ namespace pj
 			std::string str = std::string(pStrFirst) + std::string(pStrSecond);
 			FATAL(str.c_str(), args...);
 		}
+
+		/// <summary>
+		/// Write to journal file in a line with JS syntax compliant.
+		/// </summary>
+		/// <param name="pStr">Code in journal file (.js)</param>
+		/// <returns>void</returns>
+		PLAYABLEJOURNAL_API void PLAYABLE(const char* pStr);
+
+		/// <summary>
+		/// Write to journal file in a line with JS syntax compliant.
+		/// </summary>
+		/// <typeparam name="...Args">const char*</typeparam>
+		/// <param name="pStrFirst">First part of code</param>
+		/// <param name="pStrSecond">Second part of code</param>
+		/// <param name="...args">Rest part of code</param>
+		/// <returns>void</returns>
+		template<typename... Args>
+		void PLAYABLE(const char* pStrFirst, const char* pStrSecond, Args... args)
+		{
+			std::string str = std::string(pStrFirst) + std::string(pStrSecond);
+			PLAYABLE(str.c_str(), args...);
+		}
 	}
 }

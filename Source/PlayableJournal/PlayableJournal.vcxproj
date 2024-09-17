@@ -163,6 +163,7 @@
     <ClInclude Include="JournalEngine.h" />
     <ClInclude Include="JournalManager.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Playable.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>

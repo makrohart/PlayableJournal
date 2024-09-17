@@ -39,3 +39,16 @@ PLAYABLEJOURNAL_API void pj::journal::FATAL(const char* pStr)
 
 	throw std::exception(pStr);
 }
+
+PLAYABLEJOURNAL_API void pj::journal::PLAYABLE(const char* pStr)
+{
+	std::vector<std::string> strs = pj::utils::splitString(pStr, '\n');
+	if (strs.empty())
+		return;
+
+	auto first = strs.begin();
+	*first = "\n" + *first;
+
+	for (const auto& str : strs)
+		JournalManager::getInstance()->write(str.c_str());
+}
