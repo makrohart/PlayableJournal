@@ -19,9 +19,6 @@
 #pragma comment(lib, "debug\\v8_libplatform.lib")
 #pragma comment(lib, "debug\\v8_monolith.lib")
 #pragma comment(lib, "debug\\zlib.lib")
-
-#pragma comment(lib, "DbgHelp.lib")
-#pragma comment(lib, "winmm.lib")
 #else
 #pragma comment(lib, "release\\compression_utils_portable.lib")
 #pragma comment(lib, "release\\icui18n.lib")
@@ -32,5 +29,8 @@
 #pragma comment(lib, "release\\v8_monolith.lib")
 #pragma comment(lib, "release\\zlib.lib")
 #endif
+
+#pragma comment(lib, "DbgHelp.lib")
+#pragma comment(lib, "winmm.lib")
 
 #endif //PCH_H
