@@ -47,14 +47,14 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Journal.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="JournalManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="JournalEngine.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Journal.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

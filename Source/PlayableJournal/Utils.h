@@ -36,6 +36,16 @@ namespace pj
 			return strs;
 		}
 
+		inline std::string toLower(std::string str)
+		{
+			for (char& c : str)
+			{
+				// cast to unsigned char to avoid negative value
+				c = std::tolower(static_cast<unsigned char>(c));
+			}
+			return str;
+		}
+
 		// Reads a file into a v8 string.
 		inline v8::MaybeLocal<v8::String> ReadFile(v8::Isolate* isolate, const char* name)
 		{

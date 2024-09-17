@@ -9,16 +9,16 @@ namespace pj
 {
 	namespace journal
 	{
-		class JournalManager
+		PLAYABLEJOURNAL_API class JournalManager
 		{
 		public:
-			static JournalManager* getInstance();
+			PLAYABLEJOURNAL_API static JournalManager* getInstance();
 
 			void initialize(const std::string& journalPath, const size_t buffSize = 1024);
 
 			void write(const char* pData);
 
-			void executeJournal(const char* journal);
+			PLAYABLEJOURNAL_API void executeJournal(const char* journal);
 
 		public:
 			JournalEngine* getJournalEngine() { return &m_journalEngine; }

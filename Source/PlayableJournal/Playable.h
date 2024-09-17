@@ -7,6 +7,7 @@
 #include "v8.h"
 
 // =====================================================================================================
+// Experimental: This will disable Intellisense and make macro hard to debug...
 // https://www.scs.stanford.edu/~dm/blog/va-opt.html#recursive-macros
 // This will re-scan macros 342 times, EXPAND4 gets called 256 times, 
 // but the intermediary macros cause rescan as well.
@@ -34,23 +35,73 @@
 
 // =====================================================================================================
 // Macro: PLAYABLE_OBJECT, that can be playback in journal
-#define PLAYABLE_INITS(NameSpace, Class, ...) \
-static void Init(v8::Local<v8::ObjectTemplate> global) \
+//#define PLAYABLE_INITS(NameSpace, Class, ...) \
+//static void Init(v8::Local<v8::ObjectTemplate> global) \
+//{ \
+//	v8::Isolate* pIsolate = v8::Isolate::GetCurrent(); \
+//	v8::Local<v8::FunctionTemplate> _##Class##Template = v8::FunctionTemplate::New(pIsolate, Playable_##NameSpace##_##Class##::New); \
+//	_##Class##Template->SetClassName(v8::String::NewFromUtf8(pIsolate, #Class).ToLocalChecked()); \
+//	global->Set(pIsolate, #Class, _##Class##Template); \
+//	v8::Local<v8::ObjectTemplate> _##Class##_Prototype = _##Class##Template->PrototypeTemplate(); \
+//	FOR_EACH_2_FIXED_ARGS(PLAYABLE_INIT, NameSpace, Class, ##__VA_ARGS__) \
+//	v8::Local<v8::ObjectTemplate> _##Class##_Instance = _##Class##Template->InstanceTemplate(); \
+//	_##Class##_Instance->SetInternalFieldCount(1); \
+//}
+//#define PLAYABLE_INIT(NameSpace, Class, Method, ...) \
+//_##Class##_Prototype->Set(pIsolate, #Method, v8::FunctionTemplate::New(pIsolate, Playable_##NameSpace##_##Class##::Method));
+//
+//#define PLAYABLE_METHODS(NameSpace, Class, ...) FOR_EACH_2_FIXED_ARGS(PLAYABLE_METHOD, NameSpace, Class, __VA_ARGS__)
+//#define PLAYABLE_METHOD(NameSpace, Class, Method, ...) \
+//static void Method(const v8::FunctionCallbackInfo<v8::Value>& args) \
+//{ \
+//	v8::Isolate* pIsolate = args.GetIsolate(); \
+//	v8::HandleScope handleScope(pIsolate); \
+//	v8::Local<v8::Object> self = args.Holder(); \
+//	v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0)); \
+//	void* pNative = native->Value(); \
+//	static_cast<Playable<NameSpace::Class>*>(pNative)->Method(); \
+//}
+//
+//#define PLAYABLE_OBJECT(NameSpace, Class, ...) \
+//struct Playable_##NameSpace##_##Class## \
+//{ \
+//	Playable_##NameSpace##_##Class##() { Journal::JS2Native::add(Playable_##NameSpace##_##Class##::Init); } \
+//	static void New(const v8::FunctionCallbackInfo<v8::Value>& args) \
+//	{ \
+//		v8::Isolate* pIsolate = args.GetIsolate(); \
+//		Playable<NameSpace::Class>* p##Class = new Playable<NameSpace::Class>(); \
+//		args.This()->SetInternalField(0, v8::External::New(pIsolate, p##Class)); \
+//	} \
+//	PLAYABLE_INITS(NameSpace, Class, ##__VA_ARGS__) \
+//	PLAYABLE_METHODS(NameSpace, Class, ##__VA_ARGS__) \
+//} s_Playable_##NameSpace##_##Class##;
+#define PLAYABLE_ClASS_BEGIN(NameSpace, Class) \
+struct Playable_##NameSpace##_##Class## \
 { \
-	v8::Isolate* pIsolate = v8::Isolate::GetCurrent(); \
-	v8::Local<v8::FunctionTemplate> _##Class##Template = v8::FunctionTemplate::New(pIsolate, Playable_##NameSpace##_##Class##::New); \
-	_##Class##Template->SetClassName(v8::String::NewFromUtf8(pIsolate, #Class).ToLocalChecked()); \
-	global->Set(pIsolate, #Class, _##Class##Template); \
-	v8::Local<v8::ObjectTemplate> _##Class##_Prototype = _##Class##Template->PrototypeTemplate(); \
-	FOR_EACH_2_FIXED_ARGS(PLAYABLE_INIT, NameSpace, Class, ##__VA_ARGS__) \
+	Playable_##NameSpace##_##Class##() { pj::journal::JS2Native::add(Playable_##NameSpace##_##Class##::Init); } \
+	static void New(const v8::FunctionCallbackInfo<v8::Value>& args) \
+	{ \
+		v8::Isolate* pIsolate = args.GetIsolate(); \
+		Playable<NameSpace::Class>* p##Class = new Playable<NameSpace::Class>(); \
+		args.This()->SetInternalField(0, v8::External::New(pIsolate, p##Class)); \
+	} \
+	static void Init(v8::Local<v8::ObjectTemplate> global) \
+	{ \
+		v8::Isolate* pIsolate = v8::Isolate::GetCurrent(); \
+		v8::Local<v8::FunctionTemplate> _##Class##Template = v8::FunctionTemplate::New(pIsolate, Playable_##NameSpace##_##Class##::New); \
+		_##Class##Template->SetClassName(v8::String::NewFromUtf8(pIsolate, #Class).ToLocalChecked()); \
+		global->Set(pIsolate, #Class, _##Class##Template); \
+		v8::Local<v8::ObjectTemplate> _##Class##_Prototype = _##Class##Template->PrototypeTemplate();
+
+#define PLAYABLE_MEMBER_METHOD_DECLARE(NameSpace, Class, Method) \
+_##Class##_Prototype->Set(pIsolate, #Method, v8::FunctionTemplate::New(pIsolate, Playable_##NameSpace##_##Class##::Method));
+
+#define PLAYABLE_ClASS_CONTINUE(Class) \
 	v8::Local<v8::ObjectTemplate> _##Class##_Instance = _##Class##Template->InstanceTemplate(); \
 	_##Class##_Instance->SetInternalFieldCount(1); \
 }
-#define PLAYABLE_INIT(NameSpace, Class, Method, ...) \
-_##Class##_Prototype->Set(pIsolate, #Method, v8::FunctionTemplate::New(pIsolate, Playable_##NameSpace##_##Class##::Method));
 
-#define PLAYABLE_METHODS(NameSpace, Class, ...) FOR_EACH_2_FIXED_ARGS(PLAYABLE_METHOD, NameSpace, Class, __VA_ARGS__)
-#define PLAYABLE_METHOD(NameSpace, Class, Method, ...) \
+#define PLAYABLE_MEMBER_METHOD_DEFINE(NameSpace, Class, Method) \
 static void Method(const v8::FunctionCallbackInfo<v8::Value>& args) \
 { \
 	v8::Isolate* pIsolate = args.GetIsolate(); \
@@ -61,18 +112,7 @@ static void Method(const v8::FunctionCallbackInfo<v8::Value>& args) \
 	static_cast<Playable<NameSpace::Class>*>(pNative)->Method(); \
 }
 
-#define PLAYABLE_OBJECT(NameSpace, Class, ...) \
-struct Playable_##NameSpace##_##Class## \
-{ \
-	Playable_##NameSpace##_##Class##() { Journal::JS2Native::add(Playable_##NameSpace##_##Class##::Init); } \
-	static void New(const v8::FunctionCallbackInfo<v8::Value>& args) \
-	{ \
-		v8::Isolate* pIsolate = args.GetIsolate(); \
-		Playable<NameSpace::Class>* p##Class = new Playable<NameSpace::Class>(); \
-		args.This()->SetInternalField(0, v8::External::New(pIsolate, p##Class)); \
-	} \
-	PLAYABLE_INITS(NameSpace, Class, ##__VA_ARGS__) \
-	PLAYABLE_METHODS(NameSpace, Class, ##__VA_ARGS__) \
+#define PLAYABLE_ClASS_END(NameSpace, Class) \
 } s_Playable_##NameSpace##_##Class##;
 // =====================================================================================================
 
@@ -87,7 +127,7 @@ public: \
 	Playable() \
 	{ \
 		m_lastId++; \
-		m_instanceName = toLower(#Class) + "_" + std::to_string(m_lastId); \
+		m_instanceName = pj::utils::toLower(#Class) + "_" + std::to_string(m_lastId); \
 		pj::journal::PLAYABLE(m_instanceName.c_str(), " = new ", #Class, "()", ";"); \
 	}
 
