@@ -3,3 +3,6 @@ Source/.vs/
 ThirdParties/v8/
 Intermediate/
 Releasex64/
+Examples/HelloWorld/.vs/
+Examples/HelloWorld/x64/
+Examples/HelloWorld/HelloWorld/x64/
