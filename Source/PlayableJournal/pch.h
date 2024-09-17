@@ -10,4 +10,27 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
+#ifdef _DEBUG
+#pragma comment(lib, "debug\\compression_utils_portable.lib")
+#pragma comment(lib, "debug\\icui18n.lib")
+#pragma comment(lib, "debug\\icuuc.lib")
+#pragma comment(lib, "debug\\mksnapshot.lib")
+#pragma comment(lib, "debug\\v8_libbase.lib")
+#pragma comment(lib, "debug\\v8_libplatform.lib")
+#pragma comment(lib, "debug\\v8_monolith.lib")
+#pragma comment(lib, "debug\\zlib.lib")
+
+#pragma comment(lib, "DbgHelp.lib")
+#pragma comment(lib, "winmm.lib")
+#else
+#pragma comment(lib, "release\\compression_utils_portable.lib")
+#pragma comment(lib, "release\\icui18n.lib")
+#pragma comment(lib, "release\\icuuc.lib")
+#pragma comment(lib, "release\\mksnapshot.lib")
+#pragma comment(lib, "release\\v8_libbase.lib")
+#pragma comment(lib, "release\\v8_libplatform.lib")
+#pragma comment(lib, "release\\v8_monolith.lib")
+#pragma comment(lib, "release\\zlib.lib")
+#endif
+
 #endif //PCH_H
