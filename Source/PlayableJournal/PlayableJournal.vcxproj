@@ -160,10 +160,14 @@
     <ClInclude Include="DllExport.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Journal.h" />
+    <ClInclude Include="Journalable.h" />
     <ClInclude Include="JournalEngine.h" />
     <ClInclude Include="JournalManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Playable.h" />
+    <ClInclude Include="PlayableClass.h" />
+    <ClInclude Include="PlayableItems.h" />
+    <ClInclude Include="PlayableMethod.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>

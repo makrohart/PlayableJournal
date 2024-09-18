@@ -28,62 +28,53 @@
 #include <iostream>
 #include "Journal.h"
 #include "JournalManager.h"
+#include "Journalable.h"
 #include "Playable.h"
-#include "Utils.h"
+#include "vector"
 
 namespace command
 {
-    class ICommand
-    {
-    public:
-        virtual void execute() = 0;
-    };
-
-    class Command : public ICommand
+    class Command
     {
     public:
         Command() {};
 
-        virtual void execute() override
+        void execute()
         {
             pj::journal::INFO("Execute Command::excute()!");
         }
     };
-}
 
-template<typename T> 
-    requires std::derived_from<T, command::ICommand> 
-class Playable : public command::ICommand {
-public: 
-    Playable() 
+    class Directive
     {
-    m_lastId++; m_instanceName = pj::utils::toLower("Command") + "_" + std::to_string(m_lastId); 
-    pj::journal::PLAYABLE(m_instanceName.c_str(), " = new ", "Command", "()", ";");
-}
-      virtual void execute() override 
-      {
-          pj::journal::PLAYABLE(m_instanceName.c_str(), ".", "execute", "();"); m_t.execute();
-      }
-JOURNALABLE_END()
+    public:
+        Directive() {}
 
-struct Playable_command_Command {
-    Playable_command_Command() {
-        pj::journal::JS2Native::add(Playable_command_Command::Init);
-    } static void New(const v8::FunctionCallbackInfo<v8::Value>& args) {
-        v8::Isolate* pIsolate = args.GetIsolate(); Playable<command::Command>* pCommand = new Playable<command::Command>(); args.This()->SetInternalField(0, v8::External::New(pIsolate, pCommand));
-    } static void Init(v8::Local<v8::ObjectTemplate> global) {
-        v8::Isolate* pIsolate = v8::Isolate::GetCurrent(); v8::Local<v8::FunctionTemplate> _CommandTemplate = v8::FunctionTemplate::New(pIsolate, Playable_command_Command::New); _CommandTemplate->SetClassName(v8::String::NewFromUtf8(pIsolate, "Command").ToLocalChecked()); global->Set(pIsolate, "Command", _CommandTemplate); v8::Local<v8::ObjectTemplate> _Command_Prototype = _CommandTemplate->PrototypeTemplate();
-        _Command_Prototype->Set(pIsolate, "execute", v8::FunctionTemplate::New(pIsolate, Playable_command_Command::execute));
-        v8::Local<v8::ObjectTemplate> _Command_Instance = _CommandTemplate->InstanceTemplate(); _Command_Instance->SetInternalFieldCount(1);
-    }
-    static void execute(const v8::FunctionCallbackInfo<v8::Value>& args) {
-        v8::Isolate* pIsolate = args.GetIsolate(); v8::HandleScope handleScope(pIsolate); v8::Local<v8::Object> self = args.Holder(); v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0)); void* pNative = native->Value(); static_cast<Playable<command::Command>*>(pNative)->execute();
-    }
-} s_Playable_command_Command;
+        void request()
+        {
+            pj::journal::INFO("Execute Directive::request()!");
+        }
+    };
+}
+
+JOURNALABLE_CLASS_BEGIN(command, Directive)
+JOURNALABLE_METHOD(Directive, request)
+JOURNALABLE_CLASS_END(command, Directive)
+
+JOURNALABLE_CLASS_BEGIN(command, Command)
+JOURNALABLE_METHOD(Command, execute)
+JOURNALABLE_CLASS_END(command, Command)
+
+PLAYABLE_CLASS_BEGIN(command, Command, 1)
+PLAYABLE_METHOD(command, Command, execute)
+PLAYABLE_ClASS_END(command, Command)
 
 int main()
 {
-    Playable<command::Command> command;
+    Journalable<command::Directive> directive;
+    directive.request();
+
+    Journalable<command::Command> command;
     command.execute();
 
     const char file[] = "D:\\Projects\\IIAS\\Debugx64\\JSScript.js";

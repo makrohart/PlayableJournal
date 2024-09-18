@@ -3,6 +3,8 @@
 
 #include "cassert"
 #include "Journal.h"
+#include "PlayableItems.h"
+#include "PlayableMethod.h"
 #include "Utils.h"
 
 pj::journal::JournalEngine::JournalEngine()
@@ -65,7 +67,20 @@ void pj::journal::JournalEngine::bindJS2Native(v8::Isolate* pIsolate)
 	// Create a template for the global object.
 	v8::Local<v8::ObjectTemplate> globalTemplate = v8::ObjectTemplate::New(pIsolate);
 
-	pj::journal::JS2Native::initAll(globalTemplate);
+	for (const auto& playableClass : pj::playable::PlayableItems::getPlayableClasses())
+	{
+		const char* className = playableClass.getClassName().c_str();
+		v8::Local<v8::FunctionTemplate> classTemplate = v8::FunctionTemplate::New(pIsolate, playableClass.getConstructor());
+		classTemplate->SetClassName(v8::String::NewFromUtf8(pIsolate, className).ToLocalChecked());
+		globalTemplate->Set(pIsolate, className, classTemplate);
+		v8::Local<v8::ObjectTemplate> classPrototype = classTemplate->PrototypeTemplate();
+
+		for (auto& method : playableClass.getMethods())
+			classPrototype->Set(pIsolate, method.getName().c_str(), v8::FunctionTemplate::New(pIsolate, method.getMethod()));
+
+		v8::Local<v8::ObjectTemplate> classInstance = classTemplate->InstanceTemplate();
+		classInstance->SetInternalFieldCount(1);
+	}
 
 	v8::Local<v8::Context> context = v8::Context::New(pIsolate, nullptr, globalTemplate);
 	m_context = v8::Global<v8::Context>(pIsolate, context);
