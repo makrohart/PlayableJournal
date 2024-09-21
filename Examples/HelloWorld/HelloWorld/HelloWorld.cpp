@@ -81,6 +81,7 @@ int main()
     const char file[] = "D:\\Projects\\IIAS\\Debugx64\\JSScript.js";
     pj::player::Player player;
     player.play(file);
+    pj::journal::INFO("Hello World!\n");
     std::cout << "Hello World!\n";
 }
 
