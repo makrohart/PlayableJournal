@@ -2,7 +2,6 @@
 #include "DllExport.h"
 
 #include "JournalEngine.h"
-#include "PlayerOption.h"
 namespace pj
 {
 	namespace player

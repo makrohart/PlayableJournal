@@ -169,7 +169,6 @@
     <ClInclude Include="PlayableItems.h" />
     <ClInclude Include="PlayableMethod.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerOption.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
