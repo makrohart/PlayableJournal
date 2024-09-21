@@ -18,10 +18,7 @@ namespace pj
 
 			void write(const char* pData);
 
-			PLAYABLEJOURNAL_API void executeJournal(const char* journal);
-
-		public:
-			JournalEngine* getJournalEngine() { return &m_journalEngine; }
+			pj::journal::JournalEngine* getJournalEngine() { return &m_journalEngine; }
 
 		private:
 			JournalManager();
@@ -31,7 +28,7 @@ namespace pj
 			JournalManager(JournalManager&&) = delete;
 			JournalManager& operator=(const JournalManager&) = delete;
 			JournalManager& operator=(JournalManager&&) = delete;
-
+			
 		private:
 			void openOrCreate();
 			void close();
@@ -46,7 +43,7 @@ namespace pj
 			char* m_pBuffIndex;
 			size_t m_buffSize;
 
-			JournalEngine m_journalEngine;
+			pj::journal::JournalEngine m_journalEngine;
 		};
 	}
 }

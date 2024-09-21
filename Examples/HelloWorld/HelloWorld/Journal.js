@@ -79,3 +79,42 @@ command_1.execute();
 command_2 = new Command();
 command_2.execute();
 // Execute Command::excute()!
+directive_1 = new Directive();
+directive_1.request();
+// Execute Directive::request()!
+command_1 = new Command();
+command_1.execute();
+// Execute Command::excute()!
+directive_1 = new Directive();
+directive_1.request();
+// Execute Directive::request()!
+command_1 = new Command();
+command_1.execute();
+// Execute Command::excute()!
+directive_1 = new Directive();
+directive_1.request();
+// Execute Directive::request()!
+command_1 = new Command();
+command_1.execute();
+// Execute Command::excute()!
+command_2 = new Command();
+command_2.execute();
+// Execute Command::excute()!
+directive_1 = new Directive();
+directive_1.request();
+// Execute Directive::request()!
+command_1 = new Command();
+command_1.execute();
+// Execute Command::excute()!
+command_2 = new Command();
+command_2.execute();
+// Execute Command::excute()!
+directive_1 = new Directive();
+directive_1.request();
+// Execute Directive::request()!
+command_1 = new Command();
+command_1.execute();
+// Execute Command::excute()!
+command_2 = new Command();
+command_2.execute();
+// Execute Command::excute()!

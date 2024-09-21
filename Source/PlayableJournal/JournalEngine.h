@@ -10,13 +10,13 @@ namespace pj
 {
 	namespace journal
 	{
-		class JournalEngine final
+		PLAYABLEJOURNAL_API class JournalEngine final
 		{
 		public:
-			JournalEngine();
-			~JournalEngine();
+			PLAYABLEJOURNAL_API JournalEngine();
+			PLAYABLEJOURNAL_API ~JournalEngine();
 
-			int compileAndExecute(const char* scriptPath);
+			PLAYABLEJOURNAL_API int compileAndExecute(const char* scriptPath);
 
 		private:
 

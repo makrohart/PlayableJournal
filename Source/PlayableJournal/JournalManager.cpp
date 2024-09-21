@@ -80,11 +80,6 @@ void pj::journal::JournalManager::write(const char* pData)
 	flush();
 }
 
-void pj::journal::JournalManager::executeJournal(const char* journal)
-{
-	m_journalEngine.compileAndExecute(journal);
-}
-
 void pj::journal::JournalManager::write(const char* pData, const size_t writeSize)
 {
 	const size_t writableSize = m_buffSize - (m_pBuffIndex - m_pBuff);

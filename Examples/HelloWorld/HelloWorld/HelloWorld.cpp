@@ -30,6 +30,7 @@
 #include "JournalManager.h"
 #include "Journalable.h"
 #include "Playable.h"
+#include "Player.h"
 #include "vector"
 
 namespace command
@@ -78,7 +79,8 @@ int main()
     command.execute();
 
     const char file[] = "D:\\Projects\\IIAS\\Debugx64\\JSScript.js";
-    pj::journal::JournalManager::getInstance()->executeJournal(file);
+    pj::player::Player player;
+    player.play(file);
     std::cout << "Hello World!\n";
 }
 
