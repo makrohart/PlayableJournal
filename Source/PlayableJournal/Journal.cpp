@@ -5,15 +5,24 @@
 #include "string"
 #include "Utils.h"
 #include "vector"
+#include "chrono"
 
 void pj::journal::INFO(const char* pStr)
 {
+	const auto time_t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	std::stringstream timeStr;
+	tm time;
+	localtime_s(&time, &time_t);
+	timeStr << std::put_time(&time, "%Y-%m-%d %H:%M:%S");
+
+	const std::string commentPrefix = "// " + timeStr.str() + " [INFO] ";
+
 	std::vector<std::string> strs = pj::utils::splitString(pStr, '\n');
 	if (strs.empty())
 		return;
 
 	for (auto it = strs.begin(); it != strs.cend(); it++)
-		*it = "// " + *it;
+		*it = commentPrefix + *it;
 
 	auto first = strs.begin();
 	*first = "\n" + *first;
