@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Journal.h"
 
-#include "JournalManager.h"
+#include "Journalist.h"
 #include "string"
 #include "Utils.h"
 #include "vector"
@@ -28,7 +28,7 @@ void pj::journal::INFO(const char* pStr)
 	*first = "\n" + *first;
 
 	for (const auto& str : strs)
-		JournalManager::getInstance()->write(str.c_str());
+		Journalist::getInstance()->write(str.c_str());
 }
 
 PLAYABLEJOURNAL_API void pj::journal::FATAL(const char* pStr)
@@ -44,7 +44,7 @@ PLAYABLEJOURNAL_API void pj::journal::FATAL(const char* pStr)
 	*first = "\n" + *first;
 
 	for (const auto& str : strs)
-		JournalManager::getInstance()->write(str.c_str());
+		Journalist::getInstance()->write(str.c_str());
 
 	throw std::exception(pStr);
 }
@@ -59,5 +59,5 @@ PLAYABLEJOURNAL_API void pj::journal::PLAYABLE(const char* pStr)
 	*first = "\n" + *first;
 
 	for (const auto& str : strs)
-		JournalManager::getInstance()->write(str.c_str());
+		Journalist::getInstance()->write(str.c_str());
 }

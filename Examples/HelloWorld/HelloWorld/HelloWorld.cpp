@@ -27,7 +27,7 @@
 
 #include <iostream>
 #include "Journal.h"
-#include "JournalManager.h"
+#include "Journalist.h"
 #include "Journalable.h"
 #include "Playable.h"
 #include "Player.h"

@@ -9,10 +9,10 @@ namespace pj
 {
 	namespace journal
 	{
-		PLAYABLEJOURNAL_API class JournalManager
+		PLAYABLEJOURNAL_API class Journalist
 		{
 		public:
-			PLAYABLEJOURNAL_API static JournalManager* getInstance();
+			PLAYABLEJOURNAL_API static Journalist* getInstance();
 
 			void initialize(const std::string& journalPath, const size_t buffSize = 1024);
 
@@ -21,13 +21,13 @@ namespace pj
 			pj::journal::JournalEngine* getJournalEngine() { return &m_journalEngine; }
 
 		private:
-			JournalManager();
-			~JournalManager();
+			Journalist();
+			~Journalist();
 
-			JournalManager(const JournalManager&) = delete;
-			JournalManager(JournalManager&&) = delete;
-			JournalManager& operator=(const JournalManager&) = delete;
-			JournalManager& operator=(JournalManager&&) = delete;
+			Journalist(const Journalist&) = delete;
+			Journalist(Journalist&&) = delete;
+			Journalist& operator=(const Journalist&) = delete;
+			Journalist& operator=(Journalist&&) = delete;
 			
 		private:
 			void openOrCreate();

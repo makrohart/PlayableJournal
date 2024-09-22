@@ -162,7 +162,7 @@
     <ClInclude Include="Journal.h" />
     <ClInclude Include="Journalable.h" />
     <ClInclude Include="JournalEngine.h" />
-    <ClInclude Include="JournalManager.h" />
+    <ClInclude Include="Journalist.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Playable.h" />
     <ClInclude Include="PlayableClass.h" />
@@ -175,7 +175,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Journal.cpp" />
     <ClCompile Include="JournalEngine.cpp" />
-    <ClCompile Include="JournalManager.cpp" />
+    <ClCompile Include="Journalist.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -1,29 +1,30 @@
 #include "pch.h"
-#include "JournalManager.h"
+#include "Journalist.h"
 
+#include "Journal.h"
 #include "mutex"
 
 namespace
 {
 	std::mutex s_journalManagerMutex;
-	pj::journal::JournalManager* s_pJournalManager;
+	pj::journal::Journalist* s_pJournalist;
 }
 
-pj::journal::JournalManager* pj::journal::JournalManager::getInstance()
+pj::journal::Journalist* pj::journal::Journalist::getInstance()
 {
-	if (!s_pJournalManager)
+	if (!s_pJournalist)
 	{
 		s_journalManagerMutex.lock();
-		if (!s_pJournalManager)
+		if (!s_pJournalist)
 		{
-			s_pJournalManager = new JournalManager();
+			s_pJournalist = new Journalist();
 		}
 		s_journalManagerMutex.unlock();
 	}
-	return s_pJournalManager;
+	return s_pJournalist;
 }
 
-void pj::journal::JournalManager::initialize(const std::string& journalPath, const size_t buffSize)
+void pj::journal::Journalist::initialize(const std::string& journalPath, const size_t buffSize)
 {
 	m_journalPath = journalPath;
 	m_buffSize = buffSize;
@@ -35,12 +36,12 @@ void pj::journal::JournalManager::initialize(const std::string& journalPath, con
 	openOrCreate();
 }
 
-pj::journal::JournalManager::JournalManager()
+pj::journal::Journalist::Journalist()
 {
 	initialize("Journal.js");
 }
 
-pj::journal::JournalManager::~JournalManager()
+pj::journal::Journalist::~Journalist()
 {
 	if (m_pBuff)
 	{
@@ -50,7 +51,7 @@ pj::journal::JournalManager::~JournalManager()
 	}
 }
 
-void pj::journal::JournalManager::openOrCreate()
+void pj::journal::Journalist::openOrCreate()
 {
 	if (m_journal && m_journal.is_open())
 		return;
@@ -61,7 +62,7 @@ void pj::journal::JournalManager::openOrCreate()
 		m_journal.open(m_journalPath, std::fstream::out | std::fstream::app);
 }
 
-void pj::journal::JournalManager::close()
+void pj::journal::Journalist::close()
 {
 	if (m_journal)
 	{
@@ -71,7 +72,7 @@ void pj::journal::JournalManager::close()
 
 }
 
-void pj::journal::JournalManager::write(const char* pData)
+void pj::journal::Journalist::write(const char* pData)
 {
 	if (!pData)
 		throw std::invalid_argument("Invalid argument with type const char*");
@@ -80,7 +81,7 @@ void pj::journal::JournalManager::write(const char* pData)
 	flush();
 }
 
-void pj::journal::JournalManager::write(const char* pData, const size_t writeSize)
+void pj::journal::Journalist::write(const char* pData, const size_t writeSize)
 {
 	const size_t writableSize = m_buffSize - (m_pBuffIndex - m_pBuff);
 
@@ -98,7 +99,7 @@ void pj::journal::JournalManager::write(const char* pData, const size_t writeSiz
 	}
 }
 
-void pj::journal::JournalManager::flush()
+void pj::journal::Journalist::flush()
 {
 	m_journal << m_pBuff;
 	m_journal.flush();

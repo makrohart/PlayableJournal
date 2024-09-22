@@ -30,7 +30,7 @@
     <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="JournalManager.h">
+    <ClInclude Include="Journalist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="JournalEngine.h">
@@ -62,7 +62,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="JournalManager.cpp">
+    <ClCompile Include="Journalist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="JournalEngine.cpp">
