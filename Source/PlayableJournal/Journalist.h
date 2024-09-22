@@ -9,12 +9,10 @@ namespace pj
 {
 	namespace journal
 	{
-		PLAYABLEJOURNAL_API class Journalist
+		class Journalist final
 		{
 		public:
-			PLAYABLEJOURNAL_API static Journalist* getInstance();
-
-			void initialize(const std::string& journalPath, const size_t buffSize = 1024);
+			static Journalist* getInstance();
 
 			void write(const char* pData);
 
@@ -30,9 +28,11 @@ namespace pj
 			Journalist& operator=(Journalist&&) = delete;
 			
 		private:
+			void initialize(const char* pJournalPath, const size_t buffSize = 1024);
 			void openOrCreate();
-			void close();
+
 			void write(const char* pData, const size_t writeSize);
+			void close();
 			void flush();
 
 		private:
