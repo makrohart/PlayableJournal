@@ -69,7 +69,7 @@ void pj::journal::JournalEngine::bindJS2Native(v8::Isolate* pIsolate)
 
 	for (const auto& playableClass : pj::playable::PlayableItems::getPlayableClasses())
 	{
-		const char* className = playableClass.getClassName().c_str();
+		const char* className = playableClass.getName().c_str();
 		v8::Local<v8::FunctionTemplate> classTemplate = v8::FunctionTemplate::New(pIsolate, playableClass.getConstructor());
 		classTemplate->SetClassName(v8::String::NewFromUtf8(pIsolate, className).ToLocalChecked());
 		globalTemplate->Set(pIsolate, className, classTemplate);

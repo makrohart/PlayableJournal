@@ -165,10 +165,12 @@
     <ClInclude Include="Journalist.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Playable.h" />
+    <ClInclude Include="PlayableAccesser.h" />
     <ClInclude Include="PlayableClass.h" />
     <ClInclude Include="PlayableItems.h" />
     <ClInclude Include="PlayableMethod.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>

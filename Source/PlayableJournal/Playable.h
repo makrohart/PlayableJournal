@@ -9,7 +9,6 @@
 #include "string"
 #include "Utils.h"
 #include "v8.h"
-
 // =====================================================================================================
 // Macro: PLAYABLE_xxx, that can make class playable in journal in JS-syntax compliant
 #define PLAYABLE_CLASS_BEGIN(NameSpace, Class, MethodCount)                                               \
@@ -45,3 +44,13 @@ private:                                                                        
     };                                                                                                    \
 } s_Playable_##NameSpace##_##Class##;
 // =====================================================================================================
+
+#define PLAYABLE_FIELD(NameSpace, Class, FieldName, FieldType, Getter, Setter)                             \
+void Get##FieldName(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value> &info)       \
+{                                                                                                          \
+    v8::Local<v8::Object> self = info.Holder();                                                            \
+    v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0));             \
+    void* pNative = native->Value();                                                                       \
+    FieldType value = static_cast<Journalable<NameSpace::Class>*>(pNative)->Getter();                      \
+    info.GetReturnValue().Set(value);                                                                      \
+}
