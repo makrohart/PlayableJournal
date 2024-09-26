@@ -3,7 +3,7 @@
 
 #include "cassert"
 #include "Journal.h"
-#include "PlayableItems.h"
+#include "PlayableManager.h"
 #include "PlayableMethod.h"
 #include "Utils.h"
 
@@ -67,19 +67,25 @@ void pj::journal::JournalEngine::bindJS2Native(v8::Isolate* pIsolate)
 	// Create a template for the global object.
 	v8::Local<v8::ObjectTemplate> globalTemplate = v8::ObjectTemplate::New(pIsolate);
 
-	for (const auto& playableClass : pj::playable::PlayableItems::getPlayableClasses())
+	for (const auto& playableClass : pj::playable::PlayableManager::getInstance()->getPlayableClasses())
 	{
 		const char* className = playableClass.getName().c_str();
+		// Bind constructor
 		v8::Local<v8::FunctionTemplate> classTemplate = v8::FunctionTemplate::New(pIsolate, playableClass.getConstructor());
 		classTemplate->SetClassName(v8::String::NewFromUtf8(pIsolate, className).ToLocalChecked());
 		globalTemplate->Set(pIsolate, className, classTemplate);
 		v8::Local<v8::ObjectTemplate> classPrototype = classTemplate->PrototypeTemplate();
 
+		// Bind methods
 		for (auto& method : playableClass.getMethods())
 			classPrototype->Set(pIsolate, method.getName().c_str(), v8::FunctionTemplate::New(pIsolate, method.getMethod()));
 
 		v8::Local<v8::ObjectTemplate> classInstance = classTemplate->InstanceTemplate();
 		classInstance->SetInternalFieldCount(1);
+
+		// Bind getters and setters
+		for (auto& accesser : playableClass.getAccessers())
+			classInstance->SetAccessor(v8::String::NewFromUtf8(pIsolate, accesser.getName().c_str()).ToLocalChecked(), accesser.getGetter(), accesser.getSetter());
 	}
 
 	v8::Local<v8::Context> context = v8::Context::New(pIsolate, nullptr, globalTemplate);
@@ -146,7 +152,7 @@ void pj::journal::JournalEngine::reportException(v8::TryCatch* try_catch)
 		v8::Local<v8::Context> context(m_pIsolate->GetCurrentContext());
 		const char* filename_string = *filename;
 		int linenum = message->GetLineNumber(context).FromJust();
-		pj::journal::FATAL(std::format("%s:%i: %s\n", filename_string, linenum, exception_string).c_str());
+			pj::journal::FATAL(std::format("%s:%i: %s\n", filename_string, linenum, exception_string).c_str());
 		// Print line of source code.
 		v8::String::Utf8Value sourceline(m_pIsolate, message->GetSourceLine(context).ToLocalChecked());
 		const char* sourceline_string = *sourceline;

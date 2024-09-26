@@ -7,15 +7,16 @@ namespace pj
 {
 	namespace playable
 	{
-		PLAYABLEJOURNAL_API class PlayableMethod
+		class PlayableMethod
 		{
 		public:
-			PLAYABLEJOURNAL_API PlayableMethod(const std::string& methodName, v8::FunctionCallback method) : m_methodName(methodName), m_method(method) {}
+			PlayableMethod(const std::string& name, v8::FunctionCallback method) : m_name(name), m_method(method) {}
 
-			const std::string getName() const { return m_methodName; }
+			const std::string getName() const { return m_name; }
 			const v8::FunctionCallback& getMethod() const { return m_method; }
+
 		private:
-			std::string m_methodName;
+			std::string m_name;
 			v8::FunctionCallback m_method;
 		};
 	}

@@ -4,7 +4,7 @@
 #include "Journal.h"
 #include "JournalEngine.h"
 #include "PlayableClass.h"
-#include "PlayableItems.h"
+#include "PlayableManager.h"
 #include "PlayableMethod.h"
 #include "string"
 #include "Utils.h"
@@ -19,7 +19,7 @@ struct Playable_##NameSpace##_##Class##                                         
         std::vector<pj::playable::PlayableMethod> methods;                                                \
         for (int ii = 0; ii != MethodCount; ++ii)                                                         \
             methods.push_back(m_playableMethods[ii]);                                                     \
-        pj::playable::PlayableItems::add(pj::playable::PlayableClass(std::string(#Class), New, methods)); \
+        pj::playable::PlayableManager::getInstance()->add(pj::playable::PlayableClass(std::string(#Class), New, methods)); \
     }                                                                                                     \
     static void New(const v8::FunctionCallbackInfo<v8::Value>& args)                                      \
     {                                                                                                     \

@@ -12,16 +12,24 @@ namespace pj
 {
 	namespace playable
 	{
-		PLAYABLEJOURNAL_API class PlayableClass final
+		class PlayableClass final
 		{
 		public:
-			PLAYABLEJOURNAL_API PlayableClass(const std::string& className, v8::FunctionCallback constructor, const std::vector<PlayableMethod>& methods, const std::vector<PlayableAccesser>& accessers)
-			: m_name(className), m_constructor(constructor), m_methods(methods), m_accessers(accessers) {};
+			PlayableClass(const std::string& className, 
+										      const v8::FunctionCallback& constructor, 
+				                              const std::vector<PlayableMethod>& methods, 
+				                              const std::vector<PlayableAccesser>& accessers)
+			                                : m_name(className), 
+											  m_constructor(constructor), 
+											  m_methods(methods), 
+											  m_accessers(accessers)
+			{};
 
 			const std::string& getName() const { return m_name; }
 			const v8::FunctionCallback& getConstructor() const { return m_constructor; }
 			const std::vector<PlayableMethod>& getMethods() const { return m_methods; }
 			const std::vector<PlayableAccesser>& getAccessers() const { return m_accessers; }
+
 		private:
 			std::string m_name;
 			v8::FunctionCallback m_constructor;

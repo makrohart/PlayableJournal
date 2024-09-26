@@ -42,7 +42,7 @@
     <ClInclude Include="PlayableClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayableItems.h">
+    <ClInclude Include="PlayableManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlayableMethod.h">
@@ -78,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayableManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

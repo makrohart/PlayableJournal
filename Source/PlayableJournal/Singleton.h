@@ -1,48 +1,44 @@
 #pragma once
 #include "DllExport.h"
 
-#include "memory"
-#include "mutex"
-#include "type_traits"
+#define DECLARE_SINGLETON_DEFAULT(Class, ...) \
+public: \
+	PLAYABLEJOURNAL_API static Class* getInstance(); \
+private: \
+Class() = default; \
+~Class() =default; \
+Class(const Class&) = delete; \
+Class(Class&&) = delete; \
+Class& operator=(const Class&) = delete; \
+Class& operator=(Class&&) = delete;
 
-namespace pj
-{
-	namespace base
-	{
-		template<typename T>
-		class Singleton
-		{
-		public:
-			static T& getInstance()
-			{
-				if (!s_upInstance)
-				{
-					s_mutex.lock();
-					if (!s_upInstance)
-					{
-						s_upInstance = std::make_unique<T>();
-					}
-					s_mutex.unlock();
-				}
-				return *s_upInstance;
-			}
+#define DECLARE_SINGLETON(Class, ...) \
+public: \
+	PLAYABLEJOURNAL_API static Class* getInstance(); \
+private: \
+Class(); \
+~Class(); \
+Class(const Class&) = delete; \
+Class(Class&&) = delete; \
+Class& operator=(const Class&) = delete; \
+Class& operator=(Class&&) = delete;
 
-		private:
-			Singleton(){}
-
-			// Disable copy constructor and copy assignment
-			Singleton(const Singleton&) = delete;
-			Singleton& operator=(const Singleton&) = delete;
-
-		private:
-			static std::unique_ptr<T> s_upInstance;
-			static std::mutex s_mutex;
-		};
-
-		template<typename T>
-		std::unique_ptr<T> Singleton<T>::s_upInstance = nullptr;
-
-		template<typename T>
-		std::mutex Singleton<T>::s_mutex;
-	}
+#define DEFINE_SINGLETON(NameSpace, Class) \
+namespace \
+{ \
+	std::mutex s_mutex; \
+	NameSpace::Class* s_pInstance; \
+} \
+NameSpace::Class* NameSpace::Class::getInstance() \
+{ \
+	if (!s_pInstance) \
+	{ \
+		s_mutex.lock(); \
+		if (!s_pInstance) \
+		{ \
+			s_pInstance = new NameSpace::Class(); \
+		} \
+		s_mutex.unlock(); \
+	} \
+	return s_pInstance; \
 }
