@@ -1,6 +1,8 @@
 #pragma once
 #include "DllExport.h"
 
+#include "mutex"
+
 #define DECLARE_SINGLETON_DEFAULT(Class, ...) \
 public: \
 	PLAYABLEJOURNAL_API static Class* getInstance(); \

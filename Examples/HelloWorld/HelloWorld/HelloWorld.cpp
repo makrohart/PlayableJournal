@@ -30,7 +30,9 @@
 #include "Journalable.h"
 #include "Playable.h"
 #include "Player.h"
+#include "string"
 #include "vector"
+#include "PlayableManager.h"
 
 namespace command
 {
@@ -39,10 +41,27 @@ namespace command
     public:
         Command() {};
 
-        void execute()
+        void execute(std::string message, int repeatCount)
         {
-            pj::journal::INFO("Execute Command::excute()!");
+            m_message = message;
+            m_repeatCount = repeatCount;
+            for (; repeatCount != 0; repeatCount--)
+                message += m_message;
+            pj::journal::INFO(message.c_str());
         }
+
+        int getRepeatCount()
+        {
+            return m_repeatCount;   
+        }
+
+        void setRepeatCount(const int repeatCount)
+        {
+            m_repeatCount = repeatCount;
+        }
+
+        int m_repeatCount;
+        std::string m_message;
     };
 
     class Directive
@@ -61,23 +80,78 @@ JOURNALABLE_CLASS_BEGIN(command, Directive)
 JOURNALABLE_METHOD(Directive, request)
 JOURNALABLE_CLASS_END(command, Directive)
 
-JOURNALABLE_CLASS_BEGIN(command, Command)
-JOURNALABLE_METHOD(Command, execute)
-JOURNALABLE_CLASS_END(command, Command)
+//JOURNALABLE_CLASS_BEGIN(command, Command)
+//JOURNALABLE_METHOD(Command, execute)
+//JOURNALABLE_CLASS_END(command, Command)
 
-PLAYABLE_CLASS_BEGIN(command, Command, 1)
-PLAYABLE_METHOD(command, Command, execute)
-PLAYABLE_ClASS_END(command, Command)
+struct Playable_command_Command 
+{
+    Playable_command_Command() 
+    {
+        std::vector<pj::playable::PlayableMethod> methods; 
+        for (int ii = 0; ii != m_methodCount; ++ii) 
+            methods.push_back(m_playableMethods[ii]); 
+        std::vector<pj::playable::PlayableAccesser> accessers; 
+        for (int ii = 0; ii != m_propertyCount; ++ii) 
+            accessers.push_back(m_playableProperties[ii]); 
+        pj::playable::PlayableManager::getInstance()->add(pj::playable::PlayableClass("Command", New, methods, accessers));
+    } 
+    static void New(const v8::FunctionCallbackInfo<v8::Value>& args) 
+    {
+        v8::Isolate* pIsolate = args.GetIsolate(); 
+        command::Command* pCommand = new command::Command();
+        args.This()->SetInternalField(0, v8::External::New(pIsolate, pCommand));
+    }
+private: 
+    int m_propertyCount = 1; 
+    pj::playable::PlayableAccesser m_playableProperties[1] = {
+        pj::playable::PlayableAccesser{ 
+            "RepeatCount", 
+            [](v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) { 
+                v8::Local<v8::Object> self = info.Holder(); 
+                v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0)); 
+                void* pNative = native->Value(); auto nativeValue = static_cast<command::Command*>(pNative)->getRepeatCount(); 
+                auto value = propertyNative2JS<int>(nativeValue, info); 
+                info.GetReturnValue().Set(value); 
+            }, 
+            [](v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::PropertyCallbackInfo<void>& info) { 
+                v8::Local<v8::Object> self = info.Holder(); 
+                v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0)); 
+                void* pNative = native->Value(); auto nativeValue = propertyJS2Native<int>(value, info); 
+                static_cast<command::Command*>(pNative)->setRepeatCount(nativeValue); 
+            }, 
+        },
+    };
+
+private: 
+    int m_methodCount = 1; 
+    pj::playable::PlayableMethod m_playableMethods[1] = {
+
+        pj::playable::PlayableMethod{ 
+            "execute", 
+            [](const v8::FunctionCallbackInfo<v8::Value>& args) { 
+                v8::Isolate* pIsolate = args.GetIsolate(); 
+                v8::HandleScope handleScope(pIsolate); 
+                v8::Local<v8::Object> self = args.Holder(); 
+                v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0)); 
+                void* pNative = native->Value(); 
+                static_cast<command::Command*>(pNative)->execute(
+
+                    argJS2Native<std::string>(args, 0),
+                    argJS2Native<int>(args, 1)
+                ); 
+            } 
+        },
+    };
+
+} s_Playable_command_Command;
 
 int main()
 {
     Journalable<command::Directive> directive;
     directive.request();
 
-    Journalable<command::Command> command;
-    command.execute();
-
-    const char file[] = "D:\\Projects\\IIAS\\Debugx64\\JSScript.js";
+    const char file[] = "D:\\Projects\\PlayableJournal\\Examples\\HelloWorld\\x64\\Debug\\JSScript.js";
     pj::player::Player player;
     player.play(file);
     pj::journal::INFO("Hello World!\n");
