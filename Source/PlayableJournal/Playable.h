@@ -33,12 +33,12 @@
 // /*Put the following macros into source file (e.g. NativeClass.cpp)*/
 // PLAYABLE_CLASS_BEGIN(test, NativeClass)
 //    PLAYABLE_PROPERTIES_BEGIN(1)
-//       PLAYABLE_PROPERTY(test, NativeClass, Count, int, getCount, setCount)
+//       PLAYABLE_PROPERTY(Count, int, getCount, setCount)
 //    PLAYABLE_PROPERTIES_END
 //    PLAYABLE_METHODS_BEGIN(1)
-//       PLAYABLE_METHOD_BEGIN(test, NativeClass, HelloWorld)
+//       PLAYABLE_METHOD_BEGIN(HelloWorld)
 //          /*If there is multiple args, all PLAYABLE_METHOD_ARG but the last one need extra comma in the end.*/
-//          PLAYABLE_METHOD_ARG(int)
+//          PLAYABLE_METHOD_ARG(0, int)
 //       PLAYABLE_METHOD_END
 //    PLAYABLE_METHODS_END
 // PLAYABLE_CLASS_END(test, NativeClass)
@@ -54,6 +54,8 @@
 #define PLAYABLE_CLASS_BEGIN(NameSpace, Class)                                                                           \
 struct Playable_##NameSpace##_##Class##                                                                                  \
 {                                                                                                                        \
+    using Type = NameSpace::Class;                                                                                       \
+                                                                                                                         \
     Playable_##NameSpace##_##Class##()                                                                                   \
     {                                                                                                                    \
         std::vector<pj::playable::PlayableMethod> methods;                                                               \
@@ -67,9 +69,9 @@ struct Playable_##NameSpace##_##Class##                                         
     static void New(const v8::FunctionCallbackInfo<v8::Value>& args)                                                     \
     {                                                                                                                    \
         v8::Isolate* pIsolate = args.GetIsolate();                                                                       \
-        NameSpace::Class* p##Class = new NameSpace::Class();                                                             \
+        Type* p##Class = new Type();                                                                                     \
         args.This()->SetInternalField(0, v8::External::New(pIsolate, p##Class));                                         \
-    }
+    }                                                                                                                                                                                                     
 
 /// <param name="PropertyCount">Count of properties in class</param>
 #define PLAYABLE_PROPERTIES_BEGIN(PropertyCount)                                                                         \
@@ -83,23 +85,23 @@ private:                                                                        
 /// <param name="Type">Data type of property</param>
 /// <param name="Getter">Getter for the property</param>
 /// <param name="Setter">Setter for the property</param>
-#define PLAYABLE_PROPERTY(NameSpace, Class, Property, Type, Getter, Setter)                                               \
+#define PLAYABLE_PROPERTY(Property, PropertyType, Getter, Setter)                                                         \
         pj::playable::PlayableAccesser {                                                                                  \
             #Property,                                                                                                    \
             [] (v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) {                        \
                 v8::Local<v8::Object> self = info.Holder();                                                               \
                 v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0));                \
                 void* pNative = native->Value();                                                                          \
-                auto nativeValue = static_cast<NameSpace::Class*>(pNative)->Getter();                                     \
-                auto value = propertyNative2JS<Type>(nativeValue, info);                                                  \
+                auto nativeValue = static_cast<Type*>(pNative)->Getter();                                                 \
+                auto value = propertyNative2JS<PropertyType>(nativeValue, info);                                          \
                 info.GetReturnValue().Set(value);                                                                         \
             },                                                                                                            \
             [] (v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::PropertyCallbackInfo<void>& info) { \
                 v8::Local<v8::Object> self = info.Holder();                                                               \
                 v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0));                \
                 void* pNative = native->Value();                                                                          \
-                auto nativeValue = propertyJS2Native<Type>(value, info);                                                  \
-                static_cast<command::Command*>(pNative)->setRepeatCount(nativeValue);                                     \
+                auto nativeValue = propertyJS2Native<PropertyType>(value, info);                                          \
+                static_cast<Type*>(pNative)->setRepeatCount(nativeValue);                                                 \
             },                                                                                                            \
         },
 
@@ -114,7 +116,7 @@ private:                                                                        
 /// <param name="NameSpace">Namespace of class</param>
 /// <param name="Class">Class</param>
 /// <param name="Method">One method of class</param>
-#define PLAYABLE_METHOD_BEGIN(NameSpace, Class, Method)                                                       \
+#define PLAYABLE_METHOD_BEGIN(Method)                                                                         \
         pj::playable::PlayableMethod {                                                                        \
             #Method,                                                                                          \
             [](const v8::FunctionCallbackInfo<v8::Value>& args) {                                             \
@@ -123,9 +125,9 @@ private:                                                                        
 	            v8::Local<v8::Object> self = args.Holder();                                                   \
 	            v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0));    \
 	            void* pNative = native->Value();                                                              \
-	            static_cast<NameSpace::Class*>(pNative)->Method(
+	            static_cast<Type*>(pNative)->Method(
 
-#define PLAYABLE_METHOD_ARG(Index, Type) argJS2Native<Type>(args, Index)
+#define PLAYABLE_METHOD_ARG(Index, ArgType) argJS2Native<ArgType>(args, Index)
 
 #define PLAYABLE_METHOD_END                                                                                   \
                 );                                                                                            \
@@ -135,7 +137,7 @@ private:                                                                        
 #define PLAYABLE_METHODS_END                                                                                  \
     };  
 
-#define PLAYABLE_ClASS_END(NameSpace, Class)                                                              \
+#define PLAYABLE_ClASS_END(NameSpace, Class)                                                                  \
 } s_Playable_##NameSpace##_##Class##;
 // =====================================================================================================
 
