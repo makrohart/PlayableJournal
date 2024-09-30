@@ -107,6 +107,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\ThirdParties\v8\include;$(SolutionDir)..\..\Source\PlayableJournal</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

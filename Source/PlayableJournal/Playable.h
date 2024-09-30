@@ -27,8 +27,8 @@
 //       void setCount(const int count) { m_count = count; };
 //    private:
 //       int m_count;
-//    }
-// }
+//    };
+// };
 // 
 // /*Put the following macros into source file (e.g. NativeClass.cpp)*/
 // PLAYABLE_CLASS_BEGIN(test, NativeClass)
@@ -36,10 +36,7 @@
 //       PLAYABLE_PROPERTY(Count, int, getCount, setCount)
 //    PLAYABLE_PROPERTIES_END
 //    PLAYABLE_METHODS_BEGIN(1)
-//       PLAYABLE_METHOD_BEGIN(HelloWorld)
-//          /*If there is multiple args, all PLAYABLE_METHOD_ARG but the last one need extra comma in the end.*/
-//          PLAYABLE_METHOD_ARG(0, int)
-//       PLAYABLE_METHOD_END
+//          PLAYABLE_METHOD(HelloWorld, 0, int)
 //    PLAYABLE_METHODS_END
 // PLAYABLE_CLASS_END(test, NativeClass)
 // 
@@ -79,10 +76,8 @@ private:                                                                        
     int m_propertyCount = PropertyCount;                                                                                 \
     pj::playable::PlayableAccesser m_playableProperties[PropertyCount] = {
 
-/// <param name="NameSpace">Namespace of class</param>
-/// <param name="Class">Class</param>
 /// <param name="Property">One property of class</param>
-/// <param name="Type">Data type of property</param>
+/// <param name="PropertyType">Data type of property</param>
 /// <param name="Getter">Getter for the property</param>
 /// <param name="Setter">Setter for the property</param>
 #define PLAYABLE_PROPERTY(Property, PropertyType, Getter, Setter)                                                         \
@@ -101,7 +96,7 @@ private:                                                                        
                 v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0));                \
                 void* pNative = native->Value();                                                                          \
                 auto nativeValue = propertyJS2Native<PropertyType>(value, info);                                          \
-                static_cast<Type*>(pNative)->setRepeatCount(nativeValue);                                                 \
+                static_cast<Type*>(pNative)->Setter(nativeValue);                                                         \
             },                                                                                                            \
         },
 
@@ -113,10 +108,10 @@ private:                                                                        
     int m_methodCount = MethodCount;                                                                          \
     pj::playable::PlayableMethod m_playableMethods[MethodCount] = {                                       
 
-/// <param name="NameSpace">Namespace of class</param>
-/// <param name="Class">Class</param>
 /// <param name="Method">One method of class</param>
-#define PLAYABLE_METHOD_BEGIN(Method)                                                                         \
+/// <param name="ArgIndex">Place of one argument of method</param>
+/// <param name="ArgType">One argument of method</param>
+#define PLAYABLE_METHOD(Method, ArgIndex, ArgType, ...)                                                       \
         pj::playable::PlayableMethod {                                                                        \
             #Method,                                                                                          \
             [](const v8::FunctionCallbackInfo<v8::Value>& args) {                                             \
@@ -125,22 +120,22 @@ private:                                                                        
 	            v8::Local<v8::Object> self = args.Holder();                                                   \
 	            v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0));    \
 	            void* pNative = native->Value();                                                              \
-	            static_cast<Type*>(pNative)->Method(
-
-#define PLAYABLE_METHOD_ARG(Index, ArgType) argJS2Native<ArgType>(args, Index)
-
-#define PLAYABLE_METHOD_END                                                                                   \
+	            static_cast<Type*>(pNative)->Method(                                                          \
+                    argJS2Native<ArgType>(args, ArgIndex)                                                     \
+                    FOR_EACH_2(PLAYABLE_METHOD_ARG, __VA_ARGS__)                                              \
                 );                                                                                            \
             },                                                                                                \
-        },
+        }, 
 
-#define PLAYABLE_METHODS_END                                                                                  \
-    };  
+#define PLAYABLE_METHODS_END };
+
+/// <param name="ArgIndex">Place of one argument of method</param>
+/// <param name="ArgType">One argument of method</param>
+#define PLAYABLE_METHOD_ARG(ArgIndex, ArgType) , argJS2Native<ArgType>(args, ArgIndex)
 
 #define PLAYABLE_ClASS_END(NameSpace, Class)                                                                  \
 } s_Playable_##NameSpace##_##Class##;
 // =====================================================================================================
-
 template<typename T>
 T argJS2Native(const v8::FunctionCallbackInfo<v8::Value>& args, int index);
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "DllExport.h"
 
 #include "string"
 #include "vector"
@@ -18,16 +19,33 @@
 
 #define FOR_EACH(Macro, ...)                                    \
   __VA_OPT__(EXPAND(FOR_EACH_HELPER(Macro, __VA_ARGS__)))
-#define FOR_EACH_HELPER(Macro, Arg, ...)                         \
-  Macro(Arg)                                                     \
+#define FOR_EACH_HELPER(Macro, Arg, ...)                        \
+  Macro(Arg)                                                    \
   __VA_OPT__(FOR_EACH_AGAIN PARENS (Macro, __VA_ARGS__))
 #define FOR_EACH_AGAIN() FOR_EACH_HELPER
+
+#define FOR_EACH_2(Macro, ...)                                  \
+  __VA_OPT__(EXPAND(FOR_EACH_2_HELPER(Macro, __VA_ARGS__)))
+#define FOR_EACH_2_HELPER(Macro, Arg1, Arg2, ...)               \
+  Macro(Arg1, Arg2)                                             \
+  __VA_OPT__(FOR_EACH_2_AGAIN PARENS (Macro, __VA_ARGS__))
+#define FOR_EACH_2_AGAIN() FOR_EACH_2_HELPER
+
+#define METHOD(Method, Arg, ...) \
+void Method( \
+			Arg \
+			FOR_EACH(ARG, __VA_ARGS__) \
+		   );
+
+#define ARG(Arg) , Arg
+
+METHOD(execute, std::string message, int count)
 
 namespace pj
 {
 	namespace utils
 	{
-		PLAYABLEJOURNAL_API inline std::vector<std::string> splitString(const char* str, const char separator)
+		inline std::vector<std::string> splitString(const char* str, const char separator)
 		{
 			std::vector<std::string> strs;
 			int subStrLen = 1;
@@ -55,7 +73,7 @@ namespace pj
 			return strs;
 		}
 
-		PLAYABLEJOURNAL_API inline std::string toLower(std::string str)
+		inline std::string toLower(std::string str)
 		{
 			for (char& c : str)
 			{
@@ -66,7 +84,7 @@ namespace pj
 		}
 
 		// Reads a file into a v8 string.
-		PLAYABLEJOURNAL_API inline v8::MaybeLocal<v8::String> ReadFile(v8::Isolate* isolate, const char* name)
+		inline v8::MaybeLocal<v8::String> ReadFile(v8::Isolate* isolate, const char* name)
 		{
 #pragma warning(suppress : 4996)
 			FILE* file = fopen(name, "rb");
@@ -89,6 +107,32 @@ namespace pj
 			v8::MaybeLocal<v8::String> result = v8::String::NewFromUtf8(isolate, chars, v8::NewStringType::kNormal, static_cast<int>(size));
 			delete[] chars;
 			return result;
+		}
+
+		std::string formatString(const char* pStr);
+
+		template<typename... Args>
+		void formatString(const char* pStrFirst, const char* pStrSecond, Args... args)
+		{
+			std::string str = std::string(pStrFirst) + std::string(pStrSecond);
+			return formatString(str.c_str(), args...);
+		}
+
+		template<typename T>
+		std::string toString(const T& value)
+		{
+			return std::to_string(value);
+		}
+
+		/// <summary>
+		/// E.g. "std::string str" => ""std::string str""
+		/// TODO: add this to regression
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		inline std::string toString(const std::string& value)
+		{
+			return '"' + value + '"';
 		}
 	}
 }
