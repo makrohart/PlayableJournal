@@ -51,7 +51,7 @@
 #define PLAYABLE_CLASS_BEGIN(NameSpace, Class)                                                                           \
 struct Playable_##NameSpace##_##Class##                                                                                  \
 {                                                                                                                        \
-    using Type = NameSpace::Class;                                                                                       \
+    using Type = Journalable<NameSpace::Class>;                                                                          \
                                                                                                                          \
     Playable_##NameSpace##_##Class##()                                                                                   \
     {                                                                                                                    \

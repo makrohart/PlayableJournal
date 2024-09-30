@@ -27,9 +27,25 @@ struct Journalable<NameSpace::Class>                                            
 	Journalable()                                                                     \
 	{                                                                                 \
 		m_lastId++;                                                                   \
+		m_id = m_lastId;                                                              \
 		m_instanceName = pj::utils::toLower(#Class) + "_" + std::to_string(m_lastId); \
 		pj::journal::PLAYABLE(m_instanceName.c_str(), " = new ", #Class, "()", ";");  \
 	}
+
+/// <param name="Property">Property of class</param>
+/// <param name="PropertyType">Data type of one property</param>
+#define JOURNALABLE_PROPERTY(Property, PropertyType)                                                                  \
+int get##Property()                                                                                                   \
+{                                                                                                                     \
+	const std::string propertyName = pj::utils::toLower(#Property) + "_" + std::to_string(m_id);                      \
+	pj::journal::PLAYABLE(propertyName.c_str(), " = ", m_instanceName.c_str(), ".", #Property, ";");                  \
+	return m_object.get##Property();                                                                                  \
+}                                                                                                                     \
+void set##Property(const PropertyType& value)                                                                         \
+{                                                                                                                     \
+	pj::journal::PLAYABLE(m_instanceName.c_str(), ".", #Property, "= ", pj::utils::toString(value).c_str(), ";");     \
+	m_object.set##Property(value);                                                                                    \
+}
 
 /// <param name="Method">Method of class</param>
 /// <param name="ArgType">Data type of one argument of method</param>
@@ -55,6 +71,7 @@ struct Journalable<NameSpace::Class>                                            
 #define JOURNALABLE_CLASS_END(NameSpace, Class)                                       \
 private:                                                                              \
 	inline static int m_lastId = 0;                                                   \
+	int m_id;                                                                         \
 	std::string m_instanceName;                                                       \
 	NameSpace::Class m_object;                                                        \
 };                          

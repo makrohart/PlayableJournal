@@ -32,7 +32,6 @@
 #include "Player.h"
 #include "string"
 #include "vector"
-#include "PlayableManager.h"
 
 namespace command
 {
@@ -66,6 +65,7 @@ namespace command
 }
 
 JOURNALABLE_CLASS_BEGIN(command, Command)
+JOURNALABLE_PROPERTY(RepeatCount, int)
 JOURNALABLE_METHOD(execute, std::string, message, int, repeatCount)
 JOURNALABLE_CLASS_END(command, Command)
 
