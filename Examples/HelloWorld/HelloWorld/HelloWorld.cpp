@@ -62,21 +62,30 @@ namespace command
         int m_repeatCount;
         std::string m_message;
     };
+
+    void print(std::string str)
+    {
+        pj::journal::INFO(str.c_str());
+    }
 }
+
+JOURNALABLE_METHOD(command, print, std::string, str)
 
 JOURNALABLE_CLASS_BEGIN(command, Command)
 JOURNALABLE_PROPERTY(RepeatCount, int)
-JOURNALABLE_METHOD(execute, std::string, message, int, repeatCount)
+JOURNALABLE_MMETHOD(execute, std::string, message, int, repeatCount)
 JOURNALABLE_CLASS_END(command, Command)
 
+
+PLAYABLE_METHOD(command, print, 0, std::string)
 
 PLAYABLE_CLASS_BEGIN(command, Command)
 PLAYABLE_PROPERTIES_BEGIN(1)
 PLAYABLE_PROPERTY(RepeatCount, int, getRepeatCount, setRepeatCount)
 PLAYABLE_PROPERTIES_END
-PLAYABLE_METHODS_BEGIN(1)
-PLAYABLE_METHOD(execute, 0, std::string, 1, int)
-PLAYABLE_METHODS_END
+PLAYABLE_MMETHODS_BEGIN(1)
+PLAYABLE_MMETHOD(execute, 0, std::string, 1, int)
+PLAYABLE_MMETHODS_END
 PLAYABLE_ClASS_END(command, Command)
 
 int main()

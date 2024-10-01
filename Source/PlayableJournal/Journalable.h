@@ -1,6 +1,7 @@
 #pragma once
 #include "DllExport.h"
 
+#include "functional"
 #include "Journal.h"
 #include "string"
 #include "Utils.h"
@@ -50,7 +51,7 @@ void set##Property(const PropertyType& value)                                   
 /// <param name="Method">Method of class</param>
 /// <param name="ArgType">Data type of one argument of method</param>
 /// <param name="Arg">argument of method</param>
-#define JOURNALABLE_METHOD(Method, ArgType, Arg, ...)                                 \
+#define JOURNALABLE_MMETHOD(Method, ArgType, Arg, ...)                                 \
     void Method(                                                                      \
 			ArgType Arg                                                               \
 			FOR_EACH_2(JOURNALABLE_ARG, __VA_ARGS__)                                  \
@@ -81,4 +82,27 @@ private:                                                                        
 #define JOURNALABLE_ARG_TO_STRING(ArgType, Arg) , ", ", pj::utils::toString(Arg).c_str()
 
 #define JOURNALABLE_METHOD_ARG(ArgType, Arg) , Arg
+
+#define JOURNALABLE_METHOD_ARGTYPE(ArgType, Arg) , ArgType
 // =====================================================================================================
+/// <param name="Method">Method of class</param>
+/// <param name="ArgType">Data type of one argument of method</param>
+/// <param name="Arg">argument of method</param>
+#define JOURNALABLE_METHOD(NameSpace, Method, ArgType, Arg, ...)                  \
+namespace journalable                                                             \
+{                                                                                 \
+	void Method(                                                                  \
+		ArgType Arg                                                               \
+		FOR_EACH_2(JOURNALABLE_ARG, __VA_ARGS__)                                  \
+	)                                                                             \
+    {                                                                             \
+	    pj::journal::PLAYABLE(#Method, "(",                                       \
+			pj::utils::toString(Arg).c_str()                                      \
+			FOR_EACH_2(JOURNALABLE_ARG_TO_STRING, __VA_ARGS__),                   \
+		");");                                                                    \
+	    NameSpace::Method(                                                        \
+			Arg                                                                   \
+			FOR_EACH_2(JOURNALABLE_METHOD_ARG, __VA_ARGS__)                       \
+		);                                                                        \
+    };                                                                            \
+};

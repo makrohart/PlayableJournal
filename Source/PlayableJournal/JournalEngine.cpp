@@ -67,7 +67,17 @@ void pj::journal::JournalEngine::bindJS2Native(v8::Isolate* pIsolate)
 	// Create a template for the global object.
 	v8::Local<v8::ObjectTemplate> globalTemplate = v8::ObjectTemplate::New(pIsolate);
 
-	for (const auto& playableClass : pj::playable::PlayableManager::getInstance()->getPlayableClasses())
+	pj::playable::PlayableManager* pPlayableManager = pj::playable::PlayableManager::getInstance();
+
+	// Bind gloable method
+	for (const auto& playableMethod : pPlayableManager->getPlayableMethods())
+	{
+		v8::Local<v8::FunctionTemplate> functionTemplate = v8::FunctionTemplate::New(pIsolate, playableMethod.getMethod());
+		globalTemplate->Set(pIsolate, playableMethod.getName().c_str(), functionTemplate);
+	}
+
+	// Bind Class
+	for (const auto& playableClass : pPlayableManager->getPlayableClasses())
 	{
 		const char* className = playableClass.getName().c_str();
 		// Bind constructor

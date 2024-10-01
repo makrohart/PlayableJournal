@@ -103,7 +103,7 @@ private:                                                                        
 #define PLAYABLE_PROPERTIES_END };
 
 /// <param name="MethodCount">Count of methods in class</param>
-#define PLAYABLE_METHODS_BEGIN(MethodCount)                                                                   \
+#define PLAYABLE_MMETHODS_BEGIN(MethodCount)                                                                  \
 private:                                                                                                      \
     int m_methodCount = MethodCount;                                                                          \
     pj::playable::PlayableMethod m_playableMethods[MethodCount] = {                                       
@@ -111,7 +111,7 @@ private:                                                                        
 /// <param name="Method">One method of class</param>
 /// <param name="ArgIndex">Place of one argument of method</param>
 /// <param name="ArgType">One argument of method</param>
-#define PLAYABLE_METHOD(Method, ArgIndex, ArgType, ...)                                                       \
+#define PLAYABLE_MMETHOD(Method, ArgIndex, ArgType, ...)                                                      \
         pj::playable::PlayableMethod {                                                                        \
             #Method,                                                                                          \
             [](const v8::FunctionCallbackInfo<v8::Value>& args) {                                             \
@@ -127,7 +127,7 @@ private:                                                                        
             },                                                                                                \
         }, 
 
-#define PLAYABLE_METHODS_END };
+#define PLAYABLE_MMETHODS_END };
 
 /// <param name="ArgIndex">Place of one argument of method</param>
 /// <param name="ArgType">One argument of method</param>
@@ -135,6 +135,32 @@ private:                                                                        
 
 #define PLAYABLE_ClASS_END(NameSpace, Class)                                                                  \
 } s_Playable_##NameSpace##_##Class##;
+
+// =====================================================================================================
+/// <param name="NameSpace">Namespace</param>
+/// <param name="Method">One global method</param>
+/// <param name="ArgIndex">Place of one argument of method</param>
+/// <param name="ArgType">One argument of method</param>
+#define PLAYABLE_METHOD(NameSpace, Method, ArgIndex, ArgType, ...)                                            \
+struct Playable_##NameSpace##_##Method##                                                                      \
+{                                                                                                             \
+    Playable_##NameSpace##_##Method##()                                                                       \
+    {                                                                                                         \
+        pj::playable::PlayableMethod method {                                                                 \
+            #Method,                                                                                          \
+            [](const v8::FunctionCallbackInfo<v8::Value>& args) {                                             \
+        	    v8::Isolate* pIsolate = args.GetIsolate();                                                    \
+	            v8::HandleScope handleScope(pIsolate);                                                        \
+                journalable::Method(                                                                          \
+                    argJS2Native<ArgType>(args, ArgIndex)                                                     \
+                    FOR_EACH_2(PLAYABLE_METHOD_ARG, __VA_ARGS__)                                              \
+                );                                                                                            \
+            }                                                                                                 \
+        };                                                                                                    \
+        pj::playable::PlayableManager::getInstance()->add(method);                                            \
+    }                                                                                                         \
+} s_Playable_##NameSpace##_##Method##;
+
 // =====================================================================================================
 template<typename T>
 T argJS2Native(const v8::FunctionCallbackInfo<v8::Value>& args, int index);
