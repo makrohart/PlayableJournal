@@ -17,6 +17,7 @@ It supports MS Visual Studio 2022 with C++ 20 using standard conforming preproce
 4. Additional include directories of headers of PlayableJournal and v8
 5. Additional library directories of lib files of PlayableJournal and v8 under "Properties -> Linker -> General"
 6. #pragma comment libs of 
+```
     #pragma comment(lib, "PlayableJournal.lib")
     #ifdef _DEBUG
     #pragma comment(lib, "debug\\compression_utils_portable.lib")
@@ -40,6 +41,7 @@ It supports MS Visual Studio 2022 with C++ 20 using standard conforming preproce
     // Win OS
     #pragma comment(lib, "DbgHelp.lib")
     #pragma comment(lib, "winmm.lib")
+```
 7. Resolve `_ITERATOR_DEBUG_LEVEL` error under debug mode if occurs by setting `_ITERATOR_DEBUG_LEVEL=0` in preprocessor definition under "Properties -> C/C++ -> Preprocessor"
 8. Set `V8_COMPRESS_POINTERS=1` if necessary for both debug and release mode
 9. Resolve "mismatch detected for 'RuntimeLibrary'" errors after a build under "Properties -> C/C++ -> Code Generation"
