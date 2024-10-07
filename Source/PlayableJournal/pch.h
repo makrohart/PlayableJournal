@@ -11,14 +11,7 @@
 #include "framework.h"
 
 #ifdef _DEBUG
-#pragma comment(lib, "debug\\compression_utils_portable.lib")
-#pragma comment(lib, "debug\\icui18n.lib")
-#pragma comment(lib, "debug\\icuuc.lib")
-#pragma comment(lib, "debug\\mksnapshot.lib")
-#pragma comment(lib, "debug\\v8_libbase.lib")
-#pragma comment(lib, "debug\\v8_libplatform.lib")
 #pragma comment(lib, "debug\\v8_monolith.lib")
-#pragma comment(lib, "debug\\zlib.lib")
 #else
 #pragma comment(lib, "release\\compression_utils_portable.lib")
 #pragma comment(lib, "release\\icui18n.lib")

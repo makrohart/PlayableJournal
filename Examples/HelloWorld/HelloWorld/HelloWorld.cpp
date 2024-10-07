@@ -68,7 +68,7 @@ namespace command
         pj::journal::INFO(str.c_str());
     }
 }
-
+    
 JOURNALABLE_METHOD(command, print, std::string, str)
 
 JOURNALABLE_CLASS_BEGIN(command, Command)

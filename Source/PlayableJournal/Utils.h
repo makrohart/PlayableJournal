@@ -31,16 +31,6 @@
   __VA_OPT__(FOR_EACH_2_AGAIN PARENS (Macro, __VA_ARGS__))
 #define FOR_EACH_2_AGAIN() FOR_EACH_2_HELPER
 
-#define METHOD(Method, Arg, ...) \
-void Method( \
-			Arg \
-			FOR_EACH(ARG, __VA_ARGS__) \
-		   );
-
-#define ARG(Arg) , Arg
-
-METHOD(execute, std::string message, int count)
-
 namespace pj
 {
 	namespace utils
@@ -119,9 +109,14 @@ namespace pj
 		}
 
 		template<typename T>
-		std::string toString(const T& value)
+		std::string toString(T value)
 		{
 			return std::to_string(value);
+		}
+
+		PLAYABLEJOURNAL_API inline std::string toString(const char* value)
+		{
+			return std::string(value);
 		}
 
 		/// <summary>
@@ -130,7 +125,7 @@ namespace pj
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		inline std::string toString(const std::string& value)
+		PLAYABLEJOURNAL_API inline std::string toString(const std::string& value)
 		{
 			return '"' + value + '"';
 		}

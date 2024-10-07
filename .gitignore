@@ -6,3 +6,5 @@ Releasex64/
 Examples/HelloWorld/.vs/
 Examples/HelloWorld/x64/
 Examples/HelloWorld/HelloWorld/x64/
+ThirdParties/v8_10.4/
+ThirdParties/v8_13.1.9/
