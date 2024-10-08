@@ -14,20 +14,41 @@ namespace pj
         template<>
         v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const std::string& value)
         {
-            return v8::String::NewFromUtf8(pIsolate, value.c_str()).ToLocalChecked();
+            v8::EscapableHandleScope handle_scope(pIsolate);
+            return handle_scope.Escape(v8::String::NewFromUtf8(pIsolate, value.c_str()).ToLocalChecked());
         }
 
         template<typename T>
         v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const std::vector<T>& values)
         {
-            v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
-            v8::Local<v8::Array> v8Values = v8::Array::New(pIsolate, values.size());
-            for (size_t ii = 0; ii != values.size(); ++ii)
-            {
-                v8::Local<v8::Value> elem = toJSFromNative(pIsolate, values[ii]);   
-                v8Values->Set(context, ii, elem).Check();
-            }
-            return v8Values;
+            //v8::EscapableHandleScope handle_scope(pIsolate);
+            //v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
+            //v8::Local<v8::Array> v8Values = v8::Array::New(pIsolate, values.size());
+            //for (size_t ii = 0; ii != values.size(); ++ii)
+            //{
+            //    v8::Local<v8::Value> elem = toJSFromNative(pIsolate, values[ii]);
+            //    v8Values->Set(ii, elem).Check();
+            //}
+            //return handle_scope.Escape(v8Values);
+
+            // We will be creating temporary handles so we use a handle scope.
+            v8::EscapableHandleScope handle_scope(pIsolate);
+
+            // Create a new empty array.
+            v8::Local<v8::Array> array = v8::Array::New(pIsolate, 3);
+
+            // Return an empty result if there was an error creating the array.
+            if (array.IsEmpty())
+                return v8::Local<v8::Array>();
+
+            auto context = pIsolate->GetCurrentContext();
+            // Fill out the values
+            array->Set(context, 0, v8::Integer::New(pIsolate, 1));
+            array->Set(context, 1, v8::Integer::New(pIsolate, 2));
+            array->Set(context, 2, v8::Integer::New(pIsolate, 3));
+
+            // Return the value through Escape.
+            return handle_scope.Escape(array);
         }
 
         template<typename T>
