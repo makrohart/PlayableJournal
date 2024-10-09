@@ -116,7 +116,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;PLAYABLEJOURNAL_EXPORTS;_WINDOWS;_USRDLL;_ITERATOR_DEBUG_LEVEL=0;V8_COMPRESS_POINTERS=1;V8_ENABLE_SANDBOX=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;PLAYABLEJOURNAL_EXPORTS;_WINDOWS;_USRDLL;_ITERATOR_DEBUG_LEVEL=0;V8_COMPRESS_POINTERS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -139,7 +139,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;PLAYABLEJOURNAL_EXPORTS;_WINDOWS;_USRDLL;V8_COMPRESS_POINTERS=1;V8_ENABLE_SANDBOX=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;PLAYABLEJOURNAL_EXPORTS;_WINDOWS;_USRDLL;V8_COMPRESS_POINTERS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>

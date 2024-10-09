@@ -36,9 +36,11 @@ It supports MS Visual Studio 2022 with C++ 20 using standard conforming preproce
     #pragma comment(lib, "winmm.lib")
 ```
 7. Resolve `_ITERATOR_DEBUG_LEVEL` error under debug mode if occurs by setting `_ITERATOR_DEBUG_LEVEL=0` in preprocessor definition under "Properties -> C/C++ -> Preprocessor"
-8. Set `V8_COMPRESS_POINTERS=1` if necessary for both debug and release mode
+8. Set `V8_COMPRESS_POINTERS=1` and `V8_ENABLE_SANDBOX` if necessary for both debug and release mode
 9. Resolve "mismatch detected for 'RuntimeLibrary'" errors after a build under "Properties -> C/C++ -> Code Generation"
 10. Add /Zc:__cplusplus to additional options under "Properties -> C/C++ -> Command Line"
+# Known issues
+1. V8 objects like v8::Array generated in callback from other dll from PlayableJournal cause Access violation reading location.
 # Roadmap
 TBDTBDTBDBTDTBDTBDTBDTBDTBDTBD
 

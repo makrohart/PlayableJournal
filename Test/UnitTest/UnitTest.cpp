@@ -42,16 +42,6 @@ struct Playable_splitString {
             [](const v8::FunctionCallbackInfo<v8::Value>& args) { 
                 v8::Isolate* pIsolate = args.GetIsolate(); 
                 v8::HandleScope handleScope(pIsolate); 
-                auto context = pIsolate->GetCurrentContext();
-                v8::Local<v8::Context> context1(context);
-                // Create a new empty array.
-                v8::Local<v8::Array> array = v8::Array::New(pIsolate, 3);
-
-                // Fill out the values
-                array->Set(context, 0, v8::Integer::New(pIsolate, 1));
-                array->Set(context, 1, v8::Integer::New(pIsolate, 2));
-                array->Set(context, 2, v8::Integer::New(pIsolate, 3));
-
                 auto nativeRetVal = journalable::splitString(pj::utils::toNativeFromJS<const char*>(pIsolate, args[0]) , pj::utils::toNativeFromJS<const char>(pIsolate, args[1])); 
                 auto retVal = pj::utils::toJSFromNative(pIsolate, nativeRetVal); 
                 args.GetReturnValue().Set(retVal); 

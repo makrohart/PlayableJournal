@@ -20,35 +20,18 @@ namespace pj
 
         template<typename T>
         v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const std::vector<T>& values)
-        {
-            //v8::EscapableHandleScope handle_scope(pIsolate);
-            //v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
-            //v8::Local<v8::Array> v8Values = v8::Array::New(pIsolate, values.size());
-            //for (size_t ii = 0; ii != values.size(); ++ii)
-            //{
-            //    v8::Local<v8::Value> elem = toJSFromNative(pIsolate, values[ii]);
-            //    v8Values->Set(ii, elem).Check();
-            //}
-            //return handle_scope.Escape(v8Values);
-
-            // We will be creating temporary handles so we use a handle scope.
+        {         
             v8::EscapableHandleScope handle_scope(pIsolate);
+            v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
 
-            // Create a new empty array.
-            v8::Local<v8::Array> array = v8::Array::New(pIsolate, 3);
+            const int size = values.size();
+            std::vector<v8::Local<v8::Value>> pV8Values;
+            pV8Values.reserve(size);
+            for (int ii = 0; ii != size; ++ii)
+                pV8Values.push_back(toJSFromNative(pIsolate, values[ii]));
 
-            // Return an empty result if there was an error creating the array.
-            if (array.IsEmpty())
-                return v8::Local<v8::Array>();
-
-            auto context = pIsolate->GetCurrentContext();
-            // Fill out the values
-            array->Set(context, 0, v8::Integer::New(pIsolate, 1));
-            array->Set(context, 1, v8::Integer::New(pIsolate, 2));
-            array->Set(context, 2, v8::Integer::New(pIsolate, 3));
-
-            // Return the value through Escape.
-            return handle_scope.Escape(array);
+            v8::Local<v8::Array> v8Values = v8::Array::New(pIsolate, pV8Values.data(), size);
+            return handle_scope.Escape(v8Values);
         }
 
         template<typename T>

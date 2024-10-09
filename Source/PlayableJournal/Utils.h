@@ -111,12 +111,19 @@ namespace pj
 		template<typename T>
 		std::string toString(T value)
 		{
-			return std::to_string(value);
+			return std::to_string<T>(value);
 		}
 
 		PLAYABLEJOURNAL_API inline std::string toString(const char* value)
 		{
 			return std::string(value);
+		}
+
+		PLAYABLEJOURNAL_API inline std::string toString(const char value)
+		{
+			char str[2]{0};
+			str[0] = value;
+			return std::string(str);
 		}
 
 		/// <summary>
