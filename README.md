@@ -41,6 +41,7 @@ It supports MS Visual Studio 2022 with C++ 20 using standard conforming preproce
 10. Add /Zc:__cplusplus to additional options under "Properties -> C/C++ -> Command Line"
 # Known issues
 1. V8 objects like v8::Array generated in callback from other dll from PlayableJournal cause Access violation reading location.
+2. Therefore, for testing project, the playable classes and functions should be inside of one executable program or one dll.
 # Roadmap
 TBDTBDTBDBTDTBDTBDTBDTBDTBDTBD
 
