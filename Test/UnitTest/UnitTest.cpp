@@ -43,12 +43,6 @@ struct Playable_splitString {
                 v8::Isolate* pIsolate = args.GetIsolate(); 
                 v8::HandleScope handleScope(pIsolate); 
 
-                if (args[0].As<v8::Value>()->IsArray())
-                {
-                    v8::Local<v8::Array> array = args[0].As<v8::Array>();
-                    auto val = array->Get(pIsolate->GetCurrentContext(),0).ToLocalChecked();
-                }
-
                 auto nativeRetVal = journalable::splitString(pj::utils::toNativeFromJS<const char*>(pIsolate, args[0]) , pj::utils::toNativeFromJS<const char>(pIsolate, args[1])); 
                 auto retVal = pj::utils::toJSFromNative(pIsolate, nativeRetVal); 
                 args.GetReturnValue().Set(retVal); 

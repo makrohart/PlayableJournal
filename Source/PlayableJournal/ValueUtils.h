@@ -25,12 +25,10 @@ namespace pj
             v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
 
             const int size = values.size();
-            std::vector<v8::Local<v8::Value>> pV8Values;
-            pV8Values.reserve(size);
+            v8::Local<v8::Array> v8Values = v8::Array::New(pIsolate, size);
             for (int ii = 0; ii != size; ++ii)
-                pV8Values.push_back(toJSFromNative(pIsolate, values[ii]));
-
-            v8::Local<v8::Array> v8Values = v8::Array::New(pIsolate, pV8Values.data(), size);
+                v8Values->Set(context, ii, toJSFromNative(pIsolate, values[ii]));
+            
             return handle_scope.Escape(v8Values);
         }
 

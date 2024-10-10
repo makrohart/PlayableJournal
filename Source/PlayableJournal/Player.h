@@ -7,11 +7,18 @@ namespace pj
 {
 	namespace player
 	{
-		PLAYABLEJOURNAL_API class Player
+		class Player
 		{
 		public:
-			PLAYABLEJOURNAL_API Player() {};
-			PLAYABLEJOURNAL_API void play(const char* pJournalPath);
+			inline Player() = default;
+
+			inline void play(const char* pJournalPath)
+			{
+				m_journalEngine.compileAndExecute(pJournalPath);
+			}
+
+		private:
+			pj::journal::JournalEngine m_journalEngine;
 		};
 	}
 }

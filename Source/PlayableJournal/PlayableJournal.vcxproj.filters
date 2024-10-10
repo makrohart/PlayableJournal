@@ -74,13 +74,7 @@
     <ClCompile Include="Journalist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="JournalEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Journal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlayableManager.cpp">

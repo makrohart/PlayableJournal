@@ -16,8 +16,6 @@ namespace pj
 
 			void write(const char* pData);
 
-			pj::journal::JournalEngine* getJournalEngine() { return &m_journalEngine; }
-
 		private:
 			Journalist();
 			~Journalist();
@@ -42,8 +40,6 @@ namespace pj
 			char* m_pBuff;
 			char* m_pBuffIndex;
 			size_t m_buffSize;
-
-			pj::journal::JournalEngine m_journalEngine;
 		};
 	}
 }
