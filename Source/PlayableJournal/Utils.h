@@ -63,6 +63,44 @@ namespace pj
 			return strs;
 		}
 
+		inline std::string formatString(const char* pStr) { return pStr; }
+
+		template<typename... Args>
+		void formatString(const char* pStrFirst, const char* pStrSecond, Args... args)
+		{
+			std::string str = std::string(pStrFirst) + std::string(pStrSecond);
+			return formatString(str.c_str(), args...);
+		}
+
+		template<typename T>
+		std::string toString(T value)
+		{
+			return std::to_string<T>(value);
+		}
+
+		inline std::string toString(const char* value)
+		{
+			return std::string(value);
+		}
+
+		inline std::string toString(const char value)
+		{
+			char str[2]{ 0 };
+			str[0] = value;
+			return std::string(str);
+		}
+
+		/// <summary>
+		/// E.g. "std::string str" => ""std::string str""
+		/// TODO: add this to regression
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		inline std::string toString(const std::string& value)
+		{
+			return '"' + value + '"';
+		}
+
 		inline std::string toLower(std::string str)
 		{
 			for (char& c : str)
@@ -97,44 +135,6 @@ namespace pj
 			v8::MaybeLocal<v8::String> result = v8::String::NewFromUtf8(isolate, chars, v8::NewStringType::kNormal, static_cast<int>(size));
 			delete[] chars;
 			return result;
-		}
-
-		std::string formatString(const char* pStr);
-
-		template<typename... Args>
-		void formatString(const char* pStrFirst, const char* pStrSecond, Args... args)
-		{
-			std::string str = std::string(pStrFirst) + std::string(pStrSecond);
-			return formatString(str.c_str(), args...);
-		}
-
-		template<typename T>
-		std::string toString(T value)
-		{
-			return std::to_string<T>(value);
-		}
-
-		PLAYABLEJOURNAL_API inline std::string toString(const char* value)
-		{
-			return std::string(value);
-		}
-
-		PLAYABLEJOURNAL_API inline std::string toString(const char value)
-		{
-			char str[2]{0};
-			str[0] = value;
-			return std::string(str);
-		}
-
-		/// <summary>
-		/// E.g. "std::string str" => ""std::string str""
-		/// TODO: add this to regression
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		PLAYABLEJOURNAL_API inline std::string toString(const std::string& value)
-		{
-			return '"' + value + '"';
 		}
 	}
 }

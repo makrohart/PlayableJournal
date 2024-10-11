@@ -68,7 +68,7 @@ namespace pj
             char* pStr = new char[size + 1] {0};
             v8Str->WriteUtf8(pIsolate, pStr, size);
             std::string str = std::string(pStr);
-            delete pStr;
+            delete []pStr;
             return str;
         }
     }

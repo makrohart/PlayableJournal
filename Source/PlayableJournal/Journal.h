@@ -25,7 +25,7 @@ namespace pj
 		template<typename... Args>
 		void INFO(const char* pStrFirst, const char* pStrSecond, Args... args)
 		{
-			std::string str = std::string(pStrFirst) + std::string(pStrSecond);
+			const std::string str = std::string(pStrFirst) + std::string(pStrSecond);
 			INFO(str.c_str(), args...);
 		}
 
@@ -48,7 +48,7 @@ namespace pj
 		template<typename... Args>
 		void FATAL(const char* pStrFirst, const char* pStrSecond, Args... args)
 		{
-			std::string str = std::string(pStrFirst) + std::string(pStrSecond);
+			const std::string str = std::string(pStrFirst) + std::string(pStrSecond);
 			FATAL(str.c_str(), args...);
 		}
 
@@ -70,7 +70,7 @@ namespace pj
 		template<typename... Args>
 		void PLAYABLE(const char* pStrFirst, const char* pStrSecond, Args... args)
 		{
-			std::string str = std::string(pStrFirst) + std::string(pStrSecond);
+			const std::string str = std::string(pStrFirst) + std::string(pStrSecond);
 			PLAYABLE(str.c_str(), args...);
 		}
 	}

@@ -13,14 +13,7 @@
 #ifdef _DEBUG
 #pragma comment(lib, "debug\\v8_monolith.lib")
 #else
-#pragma comment(lib, "release\\compression_utils_portable.lib")
-#pragma comment(lib, "release\\icui18n.lib")
-#pragma comment(lib, "release\\icuuc.lib")
-#pragma comment(lib, "release\\mksnapshot.lib")
-#pragma comment(lib, "release\\v8_libbase.lib")
-#pragma comment(lib, "release\\v8_libplatform.lib")
 #pragma comment(lib, "release\\v8_monolith.lib")
-#pragma comment(lib, "release\\zlib.lib")
 #endif
 
 #pragma comment(lib, "DbgHelp.lib")
