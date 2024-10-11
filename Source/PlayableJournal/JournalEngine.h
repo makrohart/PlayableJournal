@@ -167,7 +167,7 @@ namespace pj
 				{
 					// V8 didn't provide any extra information about this error; just
 					// print the exception.
-					pj::journal::FATAL(std::format("%s\n", exception_string).c_str());
+					pj::journal::FATAL(exception_string);
 				}
 				else
 				{
@@ -175,22 +175,22 @@ namespace pj
 					v8::String::Utf8Value filename(m_pIsolate, message->GetScriptOrigin().ResourceName());
 					v8::Local<v8::Context> context(m_pIsolate->GetCurrentContext());
 					const char* filename_string = *filename;
-					int linenum = message->GetLineNumber(context).FromJust();
-					pj::journal::FATAL(std::format("%s:%i: %s\n", filename_string, linenum, exception_string).c_str());
+					const int linenum = message->GetLineNumber(context).FromJust();
+					pj::journal::FATAL(std::format("{}:{}: {}", filename_string, linenum, exception_string).c_str());
 					// Print line of source code.
 					v8::String::Utf8Value sourceline(m_pIsolate, message->GetSourceLine(context).ToLocalChecked());
 					const char* sourceline_string = *sourceline;
-					pj::journal::FATAL(std::format("%s\n", sourceline_string).c_str());
+					pj::journal::FATAL(sourceline_string);
 					// Print wavy underline (GetUnderline is deprecated).
 					int start = message->GetStartColumn(context).FromJust();
 					for (int i = 0; i < start; i++)
 					{
-						pj::journal::FATAL(std::format(" ").c_str());
+						pj::journal::FATAL(" ");
 					}
 					int end = message->GetEndColumn(context).FromJust();
 					for (int i = start; i < end; i++)
 					{
-						pj::journal::FATAL(std::format("^").c_str());
+						pj::journal::FATAL("^");
 					}
 					pj::journal::FATAL("\n");
 					v8::Local<v8::Value> stack_trace_string;
@@ -200,7 +200,7 @@ namespace pj
 					{
 						v8::String::Utf8Value stack_trace(m_pIsolate, stack_trace_string);
 						const char* err = *stack_trace;
-						pj::journal::FATAL(std::format("%s\n", err).c_str());
+						pj::journal::FATAL(err);
 					}
 				}
 			}
