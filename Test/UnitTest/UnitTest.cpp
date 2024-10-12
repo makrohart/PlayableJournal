@@ -18,7 +18,20 @@
 #include "Player.h"
 
 JOURNALABLE_R_METHOD(pj::utils, splitString, std::vector<std::string>, const char*, str, const char, separator)
-PLAYABLE_R_METHOD(pj::utils, splitString, std::vector<std::string>, 0, const char*, 1, const char)
+//PLAYABLE_R_METHOD(pj::utils, splitString, std::vector<std::string>, 0, const char*, 1, const char)
+
+namespace test
+{
+    void print(int count, std::string message)
+    {
+
+    }
+}
+
+JOURNALABLE_METHOD(test, print, int, count, std::string, message)
+PLAYABLE_METHOD(void, test, print, int, std::string)
+
+PLAYABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
 
 int main()
 {

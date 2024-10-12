@@ -214,3 +214,83 @@ struct Playable_##Method##                                                      
 /// <param name="ArgType">One argument of method</param>
 #define PLAYABLE_COMMA_NATIVE_ARG(ArgIndex, ArgType) , pj::utils::toNativeFromJS<ArgType>(pIsolate, args[ArgIndex])
 // =====================================================================================================
+
+
+template<typename R, typename F, typename... Args>
+void executePlayableMethod(F func, v8::Isolate* pIsolate, const v8::FunctionCallbackInfo<v8::Value>& info, Args... args)
+{
+    v8::HandleScope handleScope(pIsolate);
+    auto nativeRetVal = func(args);
+    auto retVal = pj::utils::toJSFromNative(pIsolate, nativeRetVal);
+    info.GetReturnValue().Set(retVal);
+}
+
+template<typename R, typename F, typename... Args>
+    requires std::is_void_v<R>
+void executePlayableMethod(F func, v8::Isolate* /*pIsolate*/, const v8::FunctionCallbackInfo<v8::Value>& /*info*/, Args... args)
+{
+    func(args);
+}
+
+//template<typename R, typename F>
+//void executeMethod(F func)
+//{
+//    R a = func();
+//}
+//
+//template<typename R, typename F>
+//    requires std::is_void_v<R>
+//void executeMethod(F func)
+//{
+//    func();
+//}
+//
+//namespace
+//{
+//    void print()
+//    {
+//
+//    }
+//
+//    void test()
+//    {
+//        executeMethod<void>(print);
+//    }
+//}
+// =====================================================================================================
+
+/// <param name="ReturnType">Return type of method return value</param>
+/// <param name="NameSpace">Namespace</param>
+/// <param name="Method">One global method</param>
+/// <param name="ArgType">One argument of method</param>
+#define PLAYABLE_METHOD(ReturnType, NameSpace, Method, ArgType, ...)                                          \
+struct Playable_##Method##                                                                                    \
+{                                                                                                             \
+    Playable_##Method##()                                                                                     \
+    {                                                                                                         \
+        pj::playable::PlayableMethod method {                                                                 \
+            #Method,                                                                                          \
+            [](const v8::FunctionCallbackInfo<v8::Value>& args) {                                             \
+        	    v8::Isolate* pIsolate = args.GetIsolate();                                                    \
+	            v8::HandleScope handleScope(pIsolate);                                                        \
+                if (IS_VOID(ReturnType))                                                                      \
+                {                                                                                             \
+                    journalable::Method(                                                                      \
+                        pj::utils::toNativeFromJS<ArgType>(pIsolate, args[0])                                 \
+                        FOR_EACH_WITH_STEP(PLAYABLE_COMMA_NATIVE_ARG, STEP_1, 1, __VA_ARGS__)                 \
+                    );                                                                                        \
+                }                                                                                             \
+                else                                                                                          \
+                {                                                                                             \
+                    auto nativeRetVal = journalable::Method(                                                  \
+                        pj::utils::toNativeFromJS<ArgType>(pIsolate, args[0])                                 \
+                        FOR_EACH_WITH_STEP(PLAYABLE_COMMA_NATIVE_ARG, STEP_1, 1, __VA_ARGS__)                 \
+                    );                                                                                        \
+                    auto retVal = pj::utils::toJSFromNative(pIsolate, nativeRetVal);                          \
+                    args.GetReturnValue().Set(retVal);                                                        \
+                }                                                                                             \
+            }                                                                                                 \
+        };                                                                                                    \
+        pj::playable::PlayableManager::getInstance()->add(method);                                            \
+    }                                                                                                         \
+} s_Playable_##Method##;

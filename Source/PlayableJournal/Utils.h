@@ -31,6 +31,15 @@
   __VA_OPT__(FOR_EACH_2_AGAIN PARENS (Macro, __VA_ARGS__))
 #define FOR_EACH_2_AGAIN() FOR_EACH_2_HELPER
 
+#define FOR_EACH_WITH_STEP(Macro, Step, Begin, ...)                                  \
+  __VA_OPT__(EXPAND(FOR_EACH_WITH_STEP_HELPER(Macro, Step, Begin, __VA_ARGS__)))
+#define FOR_EACH_WITH_STEP_HELPER(Macro, Step, Begin, Arg, ...)               \
+Macro(Begin, Arg)                                                             \
+  __VA_OPT__(FOR_EACH_WITH_STEP_AGAIN PARENS (Macro, Step, Step(Begin) , __VA_ARGS__))
+#define FOR_EACH_WITH_STEP_AGAIN() FOR_EACH_WITH_STEP_HELPER
+
+#define STEP_1(ii) ii+1
+
 namespace pj
 {
 	namespace utils
