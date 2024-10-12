@@ -84,7 +84,7 @@ namespace pj
 		template<typename T>
 		std::string toString(T value)
 		{
-			return std::to_string<T>(value);
+			return std::to_string(value);
 		}
 
 		inline std::string toString(const char* value)

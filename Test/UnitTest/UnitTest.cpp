@@ -24,9 +24,10 @@ namespace test
 {
     void print(int count, std::string message)
     {
-
+        pj::journal::INFO("print: ", message.c_str());
     }
 }
+
 
 JOURNALABLE_METHOD(test, print, int, count, std::string, message)
 PLAYABLE_METHOD(void, test, print, int, std::string)
