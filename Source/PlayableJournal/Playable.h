@@ -113,7 +113,7 @@ private:                                                                        
 
 /// <param name="ReturnType:">Return type of method return value</param>
 /// <param name="Method:">One member method</param>
-/// <param name="...:">One argument of method</param>
+/// <param name="...:">Argument types of method</param>
 #define PLAYABLE_MMETHOD(ReturnType, Method, ...)                                                             \
         pj::playable::PlayableMethod {                                                                        \
             #Method,                                                                                          \
@@ -133,6 +133,8 @@ private:                                                                        
 
 #define PLAYABLE_MMETHODS_END };
 
+/// <param name="NameSpace:">Namespace of class</param>
+/// <param name="Class:">Class</param>
 #define PLAYABLE_ClASS_END(NameSpace, Class)                                                                  \
 } s_Playable_##Class##;
 // =====================================================================================================
@@ -162,7 +164,7 @@ private:                                                                        
 /// <param name="ReturnType:">Return type of method return value</param>
 /// <param name="NameSpace:">Namespace</param>
 /// <param name="Method:">One global method</param>
-/// <param name="...:">One argument of method</param>
+/// <param name="...:">Argument types of method</param>
 #define PLAYABLE_METHOD(ReturnType, NameSpace, Method, ...)                                                   \
 struct Playable_##Method##                                                                                    \
 {                                                                                                             \
@@ -182,12 +184,8 @@ struct Playable_##Method##                                                      
 } s_Playable_##Method##;
 // =====================================================================================================
 
-/// <param name="ArgIndex">Place of one argument of method</param>
-/// <param name="ArgType">One argument of method</param>
 #define PLAYABLE_COMMA_NATIVE_ARG(ArgIndex, ArgType) , pj::utils::toNativeFromJS<ArgType>(pIsolate, args[ArgIndex])
 
-/// <param name="ArgIndex">Place of one argument of method</param>
-/// <param name="ArgType">One argument of method</param>
 #define PLAYABLE_COMMA_STD_PLACEHOLDER(ArgIndex, ArgType) , std::_Ph<ArgIndex>{}
 // =====================================================================================================
 

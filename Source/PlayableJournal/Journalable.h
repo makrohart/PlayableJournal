@@ -20,8 +20,8 @@ template<typename T>
 struct Journalable;
 // =====================================================================================================
 
-/// <param name="NameSpace">Namespace of class</param>
-/// <param name="Class">Class</param>
+/// <param name="NameSpace:">Namespace of class</param>
+/// <param name="Class:">Class</param>
 #define JOURNALABLE_CLASS_BEGIN(NameSpace, Class)                                     \
 template<>                                                                            \
 struct Journalable<NameSpace::Class>                                                  \
@@ -34,8 +34,8 @@ struct Journalable<NameSpace::Class>                                            
 		pj::journal::PLAYABLE(m_instanceName.c_str(), " = new ", #Class, "()", ";");  \
 	}
 
-/// <param name="Property">Property of class</param>
-/// <param name="PropertyType">Data type of one property</param>
+/// <param name="Property:">Property of class</param>
+/// <param name="PropertyType:">Data type of one property</param>
 #define JOURNALABLE_PROPERTY(Property, PropertyType)                                                                  \
 PropertyType get##Property()                                                                                          \
 {                                                                                                                     \
@@ -49,47 +49,28 @@ void set##Property(const PropertyType& value)                                   
 	m_object.set##Property(value);                                                                                    \
 }
 
-/// <param name="Method">Method of class</param>
-/// <param name="ArgType">Data type of one argument of method</param>
-/// <param name="Arg">argument of method</param>
-#define JOURNALABLE_MMETHOD(Method, ArgType, Arg, ...)                                \
-    void Method(                                                                      \
-			ArgType Arg                                                               \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARGTYPE_ARG, __VA_ARGS__)                    \
-		)                                                                             \
-    {                                                                                 \
-	    pj::journal::PLAYABLE(m_instanceName.c_str(), ".", #Method, "(",              \
-			pj::utils::toString(Arg).c_str()                                          \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARG_TOSTRING, __VA_ARGS__),                  \
-		");");                                                                        \
-	    m_object.Method(                                                              \
-			Arg                                                                       \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARG, __VA_ARGS__)                            \
-		);                                                                            \
+/// <param name="ReturnType:">Return type of method return value</param>
+/// <param name="Method:">One global method</param>
+/// <param name="ArgType:">One argument of method</param>
+/// <param name="...:">Argument types of method</param>
+#define JOURNALABLE_MMETHOD(ReturnType, Method, ArgType, ...)                                \
+	ReturnType Method(                                                                       \
+		ArgType _arg                                                                         \
+		FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)      \
+	)                                                                                        \
+    {                                                                                        \
+	    pj::journal::PLAYABLE(m_instanceName.c_str(), ".", #Method, "(",                     \
+			pj::utils::toString(_arg).c_str()                                                \
+			FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARG_TOSTRING, STEP_ARG, __arg, __VA_ARGS__) \
+		, ");");                                                                             \
+	    return m_object.Method(                                                              \
+			_arg                                                                             \
+			FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__)          \
+		);                                                                                   \
     }
 
-/// <param name="Method">Method of class</param>
-/// <param name="ReturnType">Return type of method return value</param>
-/// <param name="ArgType">Data type of one argument of method</param>
-/// <param name="Arg">argument of method</param>
-#define JOURNALABLE_R_MMETHOD(Method, ReturnType, ArgType, Arg, ...)                  \
-    ReturnType Method(                                                                \
-			ArgType Arg                                                               \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARGTYPE_ARG, __VA_ARGS__)                    \
-		)                                                                             \
-    {                                                                                 \
-	    pj::journal::PLAYABLE("retVal = ", m_instanceName.c_str(), ".", #Method, "(", \
-			pj::utils::toString(Arg).c_str()                                          \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARG_TOSTRING, __VA_ARGS__),                  \
-		");");                                                                        \
-	    return m_object.Method(                                                       \
-			Arg                                                                       \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARG, __VA_ARGS__)                            \
-		);                                                                            \
-    }
-
-/// <param name="NameSpace">Namespace of class</param>
-/// <param name="Class">Class</param>
+/// <param name="NameSpace:">Namespace of class</param>
+/// <param name="Class:">Class</param>
 #define JOURNALABLE_CLASS_END(NameSpace, Class)                                       \
 private:                                                                              \
 	inline static int m_lastId = 0;                                                   \
@@ -97,56 +78,47 @@ private:                                                                        
 	std::string m_instanceName;                                                       \
 	NameSpace::Class m_object;                                                        \
 };                          
-
-#define JOURNALABLE_COMMA_ARGTYPE_ARG(ArgType, Arg) , ArgType Arg
-
-#define JOURNALABLE_COMMA_ARG_TOSTRING(ArgType, Arg) , ", ", pj::utils::toString(Arg).c_str()
-
-#define JOURNALABLE_COMMA_ARG(ArgType, Arg) , Arg
-
 // =====================================================================================================
 
-/// <param name="Method">Method of class</param>
-/// <param name="ArgType">Data type of one argument of method</param>
-/// <param name="Arg">argument of method</param>
-#define JOURNALABLE_METHOD(NameSpace, Method, ArgType, Arg, ...)                  \
-namespace journalable                                                             \
-{                                                                                 \
-	void Method(                                                                  \
-		ArgType Arg                                                               \
-		FOR_EACH_2(JOURNALABLE_COMMA_ARGTYPE_ARG, __VA_ARGS__)                    \
-	)                                                                             \
-    {                                                                             \
-	    pj::journal::PLAYABLE(#Method, "(",                                       \
-			pj::utils::toString(Arg).c_str()                                      \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARG_TOSTRING, __VA_ARGS__),              \
-		");");                                                                    \
-	    NameSpace::Method(                                                        \
-			Arg                                                                   \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARG, __VA_ARGS__)                        \
-		);                                                                        \
-    };                                                                            \
-};
+// ---------------------------------------------- SUMMARY ----------------------------------------------
+// Make global function journable in journal.js. The macros JOURNALANLE_XXX will implement a specialied 
+// function under namespace of journalable
+// 
+// ----------------------------------------------- USAGE -----------------------------------------------
+// Use macro to  implement journalable class and its member methods. This methods invocation will be 
+// recorded as js-syntax compliant code.
+// =====================================================================================================
 
-/// <param name="Method">Method of class</param>
-/// <param name="ReturnType">Return type of method return value</param>
-/// <param name="ArgType">Data type of one argument of method</param>
-/// <param name="Arg">argument of method</param>
-#define JOURNALABLE_R_METHOD(NameSpace, Method, ReturnType, ArgType, Arg, ...)    \
-namespace journalable                                                             \
-{                                                                                 \
-	ReturnType Method(                                                            \
-		ArgType Arg                                                               \
-		FOR_EACH_2(JOURNALABLE_COMMA_ARGTYPE_ARG, __VA_ARGS__)                    \
-	)                                                                             \
-    {                                                                             \
-	    pj::journal::PLAYABLE("retVal = ", #Method, "(",                          \
-			pj::utils::toString(Arg).c_str()                                      \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARG_TOSTRING, __VA_ARGS__),              \
-		");");                                                                    \
-	    return NameSpace::Method(                                                 \
-			Arg                                                                   \
-			FOR_EACH_2(JOURNALABLE_COMMA_ARG, __VA_ARGS__)                        \
-		);                                                                        \
-    };                                                                            \
+/// <param name="ReturnType:">Return type of method return value</param>
+/// <param name="NameSpace:">Namespace</param>
+/// <param name="Method:">One global method</param>
+/// <param name="ArgType:">One argument of method</param>
+/// <param name="...:">Argument types of method</param>
+#define JOURNALABLE_METHOD(ReturnType, NameSpace, Method, ArgType, ...)                              \
+namespace journalable                                                                                \
+{                                                                                                    \
+	ReturnType Method(                                                                               \
+		ArgType _arg                                                                                 \
+		FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)              \
+	)                                                                                                \
+    {                                                                                                \
+	    pj::journal::PLAYABLE(#Method, "(",                                                          \
+			pj::utils::toString(_arg).c_str()                                                        \
+			FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARG_TOSTRING, STEP_ARG, __arg, __VA_ARGS__)         \
+		, ");");                                                                                     \
+	    return NameSpace::Method(                                                                    \
+			_arg                                                                                     \
+			FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__)                  \
+		);                                                                                           \
+    };                                                                                               \
 };
+// =====================================================================================================
+
+#define JOURNALABLE_COMMA_ARGTYPE_ARG(Arg, ArgType) , ArgType Arg
+
+#define JOURNALABLE_COMMA_ARG_TOSTRING(Arg, ArgType) , ", ", pj::utils::toString(Arg).c_str()
+
+#define JOURNALABLE_COMMA_ARG(Arg, ArgType) , Arg
+
+#define STEP_ARG(Arg) _Arg
+// =====================================================================================================
