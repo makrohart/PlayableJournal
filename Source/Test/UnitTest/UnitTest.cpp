@@ -23,7 +23,7 @@ PLAYABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, c
 int main()
 {
     pj::player::Player player;
-    const char* unitTest = "D:\\Projects\\PlayableJournal\\Debugx64\\Test\\UnitTest\\unitTest.js";
+    const char* unitTest = "D:\\Projects\\PlayableJournal\\Test\\UnitTest\\unitTest.js";
     player.play(unitTest);
 }
 
