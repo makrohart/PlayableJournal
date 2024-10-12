@@ -18,6 +18,13 @@ namespace pj
             return handle_scope.Escape(v8::String::NewFromUtf8(pIsolate, value.c_str()).ToLocalChecked());
         }
 
+        template<>
+        v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const int& value)
+        {
+            v8::EscapableHandleScope handle_scope(pIsolate);
+            return handle_scope.Escape(v8::Integer::New(pIsolate, value));
+        }
+
         template<typename T>
         v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const std::vector<T>& values)
         {         

@@ -37,9 +37,9 @@
 //    PLAYABLE_PROPERTIES_BEGIN(1)
 //       PLAYABLE_PROPERTY(Count, int, getCount, setCount)
 //    PLAYABLE_PROPERTIES_END
-//    PLAYABLE_METHODS_BEGIN(1)
-//          PLAYABLE_METHOD(HelloWorld, 0, int)
-//    PLAYABLE_METHODS_END
+//    PLAYABLE_MMETHODS_BEGIN(1)
+//          PLAYABLE_MMETHOD(void, HelloWorld, int)
+//    PLAYABLE_MMETHODS_END
 // PLAYABLE_CLASS_END(test, NativeClass)
 // 
 // /*Then, native class is binded with js class. In .js file, we can call:*/
@@ -48,8 +48,8 @@
 // jsClass.Count;
 // =====================================================================================================
 
-/// <param name="NameSpace">Namespace of class</param>
-/// <param name="Class">Class</param>
+/// <param name="NameSpace:">Namespace of class</param>
+/// <param name="Class:">Class</param>
 #define PLAYABLE_CLASS_BEGIN(NameSpace, Class)                                                                           \
 struct Playable_##Class##                                                                                                \
 {                                                                                                                        \
@@ -77,10 +77,10 @@ private:                                                                        
     int m_propertyCount = PropertyCount;                                                                                 \
     pj::playable::PlayableAccesser m_playableProperties[PropertyCount] = {
 
-/// <param name="Property">One property of class</param>
-/// <param name="PropertyType">Data type of property</param>
-/// <param name="Getter">Getter for the property</param>
-/// <param name="Setter">Setter for the property</param>
+/// <param name="Property:">One property of class</param>
+/// <param name="PropertyType:">Data type of property</param>
+/// <param name="Getter:">Getter for the property</param>
+/// <param name="Setter:">Setter for the property</param>
 #define PLAYABLE_PROPERTY(Property, PropertyType, Getter, Setter)                                                         \
         pj::playable::PlayableAccesser {                                                                                  \
             #Property,                                                                                                    \
@@ -105,16 +105,16 @@ private:                                                                        
 
 #define PLAYABLE_PROPERTIES_END };
 
-/// <param name="MethodCount">Count of methods in class</param>
+/// <param name="MethodCount:">Count of methods in class</param>
 #define PLAYABLE_MMETHODS_BEGIN(MethodCount)                                                                  \
 private:                                                                                                      \
     int m_methodCount = MethodCount;                                                                          \
     pj::playable::PlayableMethod m_playableMethods[MethodCount] = {                                       
 
-/// <param name="Method">One method of class</param>
-/// <param name="ArgIndex">Place of one argument of method</param>
-/// <param name="ArgType">One argument of method</param>
-#define PLAYABLE_MMETHOD(Method, ArgIndex, ArgType, ...)                                                      \
+/// <param name="ReturnType:">Return type of method return value</param>
+/// <param name="Method:">One member method</param>
+/// <param name="...:">One argument of method</param>
+#define PLAYABLE_MMETHOD(ReturnType, Method, ...)                                                             \
         pj::playable::PlayableMethod {                                                                        \
             #Method,                                                                                          \
             [](const v8::FunctionCallbackInfo<v8::Value>& args) {                                             \
@@ -123,34 +123,13 @@ private:                                                                        
 	            v8::Local<v8::Object> self = args.Holder();                                                   \
 	            v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0));    \
 	            void* pNative = native->Value();                                                              \
-	            static_cast<Type*>(pNative)->Method(                                                          \
-                    pj::utils::toNativeFromJS<ArgType>(pIsolate, args[ArgIndex])                              \
-                    FOR_EACH_2(PLAYABLE_COMMA_NATIVE_ARG, __VA_ARGS__)                                        \
+                auto function = std::bind(&Type::Method, static_cast<Type*>(pNative)                          \
+                    FOR_EACH_WITH_STEP(PLAYABLE_COMMA_STD_PLACEHOLDER, STEP_1, 1, __VA_ARGS__));              \
+                executePlayableMethod<ReturnType>(function, pIsolate, args                                    \
+                    FOR_EACH_WITH_STEP(PLAYABLE_COMMA_NATIVE_ARG, STEP_1, 0, __VA_ARGS__)                     \
                 );                                                                                            \
             },                                                                                                \
-        }, 
-
-/// <param name="Method">One method of class</param>
-/// <param name="ReturnType">Return type of method return value</param>
-/// <param name="ArgIndex">Place of one argument of method</param>
-/// <param name="ArgType">One argument of method</param>
-#define PLAYABLE_R_MMETHOD(Method, ReturnType, ArgIndex, ArgType, ...)                                        \
-        pj::playable::PlayableMethod {                                                                        \
-            #Method,                                                                                          \
-            [](const v8::FunctionCallbackInfo<v8::Value>& args) {                                             \
-        	    v8::Isolate* pIsolate = args.GetIsolate();                                                    \
-	            v8::HandleScope handleScope(pIsolate);                                                        \
-	            v8::Local<v8::Object> self = args.Holder();                                                   \
-	            v8::Local<v8::External> native = v8::Local<v8::External>::Cast(self->GetInternalField(0));    \
-	            void* pNative = native->Value();                                                              \
-                auto nativeRetVal = static_cast<Type*>(pNative)->Method(                                      \
-                    pj::utils::toNativeFromJS<ArgType>(pIsolate, args[ArgIndex])                              \
-                    FOR_EACH_2(PLAYABLE_COMMA_NATIVE_ARG, __VA_ARGS__)                                        \
-                );                                                                                            \
-                auto retVal = pj::utils::toJSFromNative(pIsolate, nativeRetVal);                              \
-                args.GetReturnValue().Set(retVal);                                                            \
-            },                                                                                                \
-        }, 
+        },
 
 #define PLAYABLE_MMETHODS_END };
 
@@ -158,10 +137,32 @@ private:                                                                        
 } s_Playable_##Class##;
 // =====================================================================================================
 
-/// <param name="ReturnType">Return type of method return value</param>
-/// <param name="NameSpace">Namespace</param>
-/// <param name="Method">One global method</param>
-/// <param name="ArgType">One argument of method</param>
+// =====================================================================================================
+// ---------------------------------------------- SUMMARY ----------------------------------------------
+// Make global function playable in journal.js. The following bundle of macros are designed to bind C++ 
+// native classes with JS classes.
+// 
+// ----------------------------------------------- USAGE -----------------------------------------------
+// /*Given a C++ class:*/
+// namespace test
+// {
+//      std::string print(std::string str)
+//      {
+//          return str;
+//      }
+// };
+// 
+// /*Put the following macros into source file (e.g. NativeClass.cpp)*/
+// PLAYABLE_METHOD(std::string, print, std::string)
+// 
+// /*Then, native class is binded with js class. In .js file, we can call:*/
+// retVal = print("HelloWorld");
+// =====================================================================================================
+
+/// <param name="ReturnType:">Return type of method return value</param>
+/// <param name="NameSpace:">Namespace</param>
+/// <param name="Method:">One global method</param>
+/// <param name="...:">One argument of method</param>
 #define PLAYABLE_METHOD(ReturnType, NameSpace, Method, ...)                                                   \
 struct Playable_##Method##                                                                                    \
 {                                                                                                             \
@@ -184,10 +185,14 @@ struct Playable_##Method##                                                      
 /// <param name="ArgIndex">Place of one argument of method</param>
 /// <param name="ArgType">One argument of method</param>
 #define PLAYABLE_COMMA_NATIVE_ARG(ArgIndex, ArgType) , pj::utils::toNativeFromJS<ArgType>(pIsolate, args[ArgIndex])
+
+/// <param name="ArgIndex">Place of one argument of method</param>
+/// <param name="ArgType">One argument of method</param>
+#define PLAYABLE_COMMA_STD_PLACEHOLDER(ArgIndex, ArgType) , std::_Ph<ArgIndex>{}
 // =====================================================================================================
 
 template<typename R, typename F, typename... Args>
-void executePlayableMethod(F func, v8::Isolate* pIsolate, const v8::FunctionCallbackInfo<v8::Value>& info, Args... args)
+void executePlayableMethod(const F& func, v8::Isolate* pIsolate, const v8::FunctionCallbackInfo<v8::Value>& info, Args... args)
 {
     v8::HandleScope handleScope(pIsolate);
     auto nativeRetVal = func(std::forward<Args>(args)...);
@@ -197,7 +202,7 @@ void executePlayableMethod(F func, v8::Isolate* pIsolate, const v8::FunctionCall
 
 template<typename R, typename F, typename... Args>
     requires std::is_void_v<R>
-void executePlayableMethod(F func, v8::Isolate* /*pIsolate*/, const v8::FunctionCallbackInfo<v8::Value>& /*info*/, Args... args)
+void executePlayableMethod(const F& func, v8::Isolate* /*pIsolate*/, const v8::FunctionCallbackInfo<v8::Value>& /*info*/, Args... args)
 {
     func(std::forward<Args>(args)...);
 }
