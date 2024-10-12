@@ -18,54 +18,6 @@
 #include "Player.h"
 
 JOURNALABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
-
-namespace test
-{
-    void print(int count, std::string message)
-    {
-        pj::journal::INFO("print: ", message.c_str());
-    }
-
-    class testClass
-    {
-    public:
-        void testMethod(int count, std::string message)
-        {
-            pj::journal::INFO("print: ", message.c_str());
-        }
-
-        void setCount(const int count)
-        {
-            m_count = count;
-        }
-
-        int getCount() const
-        {
-            return m_count;
-        }
-
-    private:
-        int m_count;
-    };
-}
-
-JOURNALABLE_METHOD(void, test, print, int, std::string)
-PLAYABLE_METHOD(void, test, print, int, std::string)
-
-JOURNALABLE_CLASS_BEGIN(test, testClass)
-JOURNALABLE_PROPERTY(Count, int)
-JOURNALABLE_MMETHOD(void, testMethod, int, std::string)
-JOURNALABLE_CLASS_END(test, testClass)
-
-PLAYABLE_CLASS_BEGIN(test, testClass)
-    PLAYABLE_PROPERTIES_BEGIN(1)
-        PLAYABLE_PROPERTY(Count, int, getCount, setCount)
-    PLAYABLE_PROPERTIES_END
-    PLAYABLE_MMETHODS_BEGIN(1)
-        PLAYABLE_MMETHOD(void, testMethod, int, std::string)
-    PLAYABLE_MMETHODS_END
-PLAYABLE_ClASS_END(test, testClass)
-
 PLAYABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
 
 int main()
