@@ -16,12 +16,53 @@
 #include "Journalable.h"
 #include "Playable.h"
 #include "Player.h"
+#include "JournalAspect.h"
+#include "Utils.h"
+#include "Journalable.h"
 
 JOURNALABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
 PLAYABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
 
+namespace demo
+{
+    class test
+    {
+    public:
+        virtual void print(std::string str, int count)
+        {
+
+        }
+    };
+
+    class childTest : test
+    {
+    public:
+        virtual void print(std::string str, int count) override
+        {
+
+        }
+    };
+
+    
+}
+
+void printt(std::string str, int count) 
+{
+
+}
+
+ASPECT_METHOD(pj::journal::JournalAspect, void, printt, std::string, int)
+
+ASPECT_VCLASS_BEGIN(pj::journal::JournalAspect, demo::test)
+ASPECT_VMETHOD(void, print, std::string, int)
+ASPECT_VCLASS_END
+
 int main()
 {
+    demo::test test;
+    aop::AspectProxy<demo::test, pj::journal::JournalAspect> proxy(test);
+    proxy.print("xxx", 12);
+
     pj::player::Player player;
     const char* unitTest = "D:\\Projects\\PlayableJournal\\Test\\UnitTest\\unitTest.js";
     player.play(unitTest);
