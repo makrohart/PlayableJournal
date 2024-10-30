@@ -38,4 +38,5 @@ Macro(Begin, Arg)                                                             \
 
 #define COMMA_ARGTYPE_ARG(Arg, ArgType) , ArgType Arg
 #define COMMA_ARG(Arg, ArgType) , Arg
+#define COMMA_STD_PLACEHOLDER(ArgIndex, ArgType) , std::_Ph<ArgIndex>{}
 
