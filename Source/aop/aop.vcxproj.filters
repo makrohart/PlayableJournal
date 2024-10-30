@@ -18,5 +18,8 @@
     <ClInclude Include="Aspect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MethodInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

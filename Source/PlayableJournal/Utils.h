@@ -75,6 +75,24 @@ namespace pj
 			return '"' + value + '"';
 		}
 
+		template<typename T, typename U>
+		std::string toStringFromArgs(const char* pSeparator, T argFirst, U argSecond)
+		{
+			std::string strArgFirst = pj::utils::toString(argFirst);
+			std::string strArgSecond = pj::utils::toString(argSecond);
+			std::string str = std::string(strArgFirst) + std::string(pSeparator) + std::string(strArgSecond);
+			return str;
+		}
+
+		template<typename T, typename U, typename... Args>
+		std::string toStringFromArgs(const char* pSeparator, T argFirst, U argSecond, Args&&... args)
+		{
+			std::string strArgFirst = toString(argFirst);
+			std::string strArgSecond = toString(argSecond);
+			std::string str = std::string(strArgFirst) + std::string(pSeparator) + std::string(strArgSecond);
+			return toStringFromArgs(pSeparator, str.c_str(), args...);
+		}
+
 		inline std::string toLower(std::string str)
 		{
 			for (char& c : str)

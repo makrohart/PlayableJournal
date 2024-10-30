@@ -13,55 +13,56 @@
 
 #include <iostream>
 
+#include "functional"
 #include "Journalable.h"
 #include "Playable.h"
+#include "PlayableAspect.h"
 #include "Player.h"
 #include "JournalAspect.h"
 #include "Utils.h"
 #include "Journalable.h"
 
-JOURNALABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
-PLAYABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
-
-namespace demo
+namespace test
 {
-    class test
+    class testBaseClass
     {
     public:
         virtual void print(std::string str, int count)
         {
+            std::string message;
+            for (int ii = count; ii != 0; ii--)
+                message += str;
 
+            pj::journal::INFO("test::testBaseClass::print: ", message.c_str());
         }
     };
 
-    class childTest : test
+    class testDerivedClass : testBaseClass
     {
     public:
         virtual void print(std::string str, int count) override
         {
+            std::string message;
+            for (int ii = count; ii != 0; ii--)
+                message += str;
 
+            pj::journal::INFO("test::testDerivedClass::print: ", message.c_str());
         }
     };
-
-    
 }
 
-void printt(std::string str, int count) 
-{
+JOURNALABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
+PLAYABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
 
-}
-
-ASPECT_METHOD(pj::journal::JournalAspect, void, printt, std::string, int)
-
-ASPECT_VCLASS_BEGIN(pj::journal::JournalAspect, demo::test)
+ASPECT_VCLASS_BEGIN(pj::playable::PlayableAspect, test::testDerivedClass)
 ASPECT_VMETHOD(void, print, std::string, int)
 ASPECT_VCLASS_END
 
 int main()
 {
-    demo::test test;
-    aop::AspectProxy<demo::test, pj::journal::JournalAspect> proxy(test);
-    proxy.print("xxx", 12);
+    test::testDerivedClass testDerivedClass;
+    aop::AspectProxy<test::testDerivedClass, pj::playable::PlayableAspect> proxy(testDerivedClass);
+    proxy.print("xyz_", 3);
 
     pj::player::Player player;
     const char* unitTest = "D:\\Projects\\PlayableJournal\\Test\\UnitTest\\unitTest.js";

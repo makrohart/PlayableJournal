@@ -11,7 +11,7 @@ namespace pj
 		{
 		public:
 			template<typename R, typename F, typename... Args>
-			static R invoke(const F& func, Args&&... args) {}
+			static R invoke(const aop::MethodInfo& methodInfo, const F& func, Args&&... args) {}
 		};
 	}
 }

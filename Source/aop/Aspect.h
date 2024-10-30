@@ -1,6 +1,7 @@
 #pragma once
 
 #include "..\base\MacroUtils.h"
+#include "MethodInfo.h"
 
 /// <summary>
 /// Start to weave a class into an aspect by deriving a class as proxy from a target class.
@@ -22,15 +23,17 @@ namespace aop                                                                   
 /// <param name="ReturnType:">Return type of method</param>
 /// <param name="Method:">Method name</param>
 /// <param name="ArgType:">One argument type</param>
-#define ASPECT_VMETHOD(ReturnType, Method, ArgType, ...)                                                      \
-        virtual ReturnType Method(                                                                            \
-                                    ArgType _arg                                                              \
-                                    FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)       \
-                                 ) override                                                                   \
-        {                                                                                                     \
-            return invoke<ReturnType>(std::bind<ReturnType(ArgType, __VA_ARGS__)>(&Type::Method, &m_target),  \
-			        _arg                                                                                      \
-			        FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__));                             \
+#define ASPECT_VMETHOD(ReturnType, Method, ArgType, ...)                                                                                \
+        virtual ReturnType Method(										                                                                \
+                                    ArgType _arg                                                                                        \
+                                    FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)                                 \
+                                 ) override                                                                                             \
+        {                                                                                                                               \
+			auto function = std::bind(&Type::Method, &m_target                                                                          \
+                    FOR_EACH_WITH_STEP(COMMA_STD_PLACEHOLDER, STEP_1, 1, ArgType, __VA_ARGS__));                                        \
+            return invoke<ReturnType>(aop::MethodInfo(#Method), function,                                                               \
+			        _arg                                                                                                                \
+			        FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__));                                                       \
         }
 
 /// <summary>
@@ -62,15 +65,17 @@ namespace aop                                                                   
 /// <param name="ReturnType:">Return type of method</param>
 /// <param name="Method:">Method name</param>
 /// <param name="ArgType:">One argument type</param>
-#define ASPECT_MMETHOD(ReturnType, Method, ArgType, ...)                                                      \
-        ReturnType Method(                                                                                    \
-                                    ArgType _arg                                                              \
-                                    FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)       \
-                                 )                                                                            \
-        {                                                                                                     \
-            return invoke<ReturnType>(std::bind<ReturnType(ArgType, __VA_ARGS__)>(&Type::Method, &m_target),  \
-			        _arg                                                                                      \
-			        FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__));                             \
+#define ASPECT_MMETHOD(ReturnType, Method, ArgType, ...)                                                                                \
+        ReturnType Method(                                                                                                              \
+                                    ArgType _arg                                                                                        \
+                                    FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)                                 \
+                                 )                                                                                                      \
+        {                                                                                                                               \
+			auto function = std::bind(&Type::Method, &m_target                                                                          \
+                    FOR_EACH_WITH_STEP(COMMA_STD_PLACEHOLDER, STEP_1, 1, ArgType, __VA_ARGS__));                                        \
+            return invoke<ReturnType>(aop::MethodInfo(#Method), function,                                                               \
+			        _arg                                                                                                                \
+			        FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__));                                                       \
         }
 
 /// <summary>
@@ -99,7 +104,7 @@ namespace aop                                                                   
                             FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)               \
                          )                                                                                    \
         {                                                                                                     \
-            return invoke<ReturnType>(Method,                                                                 \
+            return invoke<ReturnType>(aop::MethodInfo(#Method), ::Method,                                     \
 												_arg                                                          \
 												FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__)); \
         }                                                                                                     \
@@ -116,7 +121,7 @@ namespace aop
 	struct Aspect
 	{
 		template<typename R, typename F, typename... Args>
-		static R invoke(const F& func, Args&&... args)
+		static R invoke(const MethodInfo& methodInfo, const F& func, Args&&... args)
 		{
 			static_assert(std::is_base_of<Aspect, A>::value, "Class Aspect should be inherited!");
 			return static_cast<A*>(this)->invoke(func, std::forward<Args>(args)...);
