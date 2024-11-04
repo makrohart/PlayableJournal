@@ -80,8 +80,8 @@ namespace test
 }
 
 // TestCase 1: Playable global method
-JOURNALABLE_METHOD(std::vector<std::string>, base::string, splitString, const char*, const char)
-PLAYABLE_METHOD(std::vector<std::string>, base::string, splitString, const char*, const char)
+JOURNALABLE_METHOD(std::vector<std::string>, base::string, splitString, const char*, const char*)
+PLAYABLE_METHOD(std::vector<std::string>, base::string, splitString, const char*, const char*)
 
 // TestCase 2: Playable class
 JOURNALABLE_CLASS_BEGIN(test, NativeClass)
@@ -112,7 +112,7 @@ ASPECT_MMETHOD(std::string, stringMethodStringInt, const std::string&, const int
 ASPECT_CLASS_END
 
 // TestCase 5: AOP method
-ASPECT_METHOD(pj::playable::PlayableAspect, std::vector<std::string>, base::string, splitString, const char*, const char)
+ASPECT_METHOD(pj::playable::PlayableAspect, std::vector<std::string>, base::string, splitString, const char*, const char*)
 
 int main()
 {
@@ -124,8 +124,8 @@ int main()
     aop::AspectProxy<test::NativeClass, pj::playable::PlayableAspect> nativeClassProxy(nativeClass);
     nativeClassProxy.voidMethodInt(12);
 
-    aop::AspectProxy<std::vector<std::string>(const char*, const char), pj::playable::PlayableAspect> splitStringProxy;
-    splitStringProxy.splitString("xyz_", 'y');
+    aop::AspectProxy<std::vector<std::string>(const char*, const char*), pj::playable::PlayableAspect> splitStringProxy;
+    splitStringProxy.splitString("xyz_", "y");
 
     pj::player::Player player;
     const char* unitTest = "D:\\Projects\\PlayableJournal\\Test\\UnitTest\\unitTest.js";

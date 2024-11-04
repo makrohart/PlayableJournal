@@ -17,7 +17,7 @@ namespace aop                                                                   
     struct AspectProxy<Class, AspectClass> : Class, AspectClass                                                                     \
     {                                                                                                                               \
         using Type = Class;                                                                                                         \
-		AspectProxy(Type target) : m_target(target), m_objectInfo(*(base::string::splitString(#Class, ':').cend() - 1), m_lastId++) \
+		AspectProxy(Type target) : m_target(target), m_objectInfo(*(base::string::splitString(#Class, "::").cend() - 1), m_lastId++)\
 		{                                                                                                                           \
 		  preConstructor(m_objectInfo);                                                                                             \
 		}
@@ -64,7 +64,7 @@ namespace aop                                                                   
     struct AspectProxy<Class, AspectClass> : AspectClass                                                                            \
     {                                                                                                                               \
         using Type = Class;                                                                                                         \
-		AspectProxy(Type target) : m_target(target), m_objectInfo(*(base::string::splitString(#Class, ':').cend() - 1), m_lastId++) \
+		AspectProxy(Type target) : m_target(target), m_objectInfo(*(base::string::splitString(#Class, "::").cend() - 1), m_lastId++)\
 		{                                                                                                                           \
 		  preConstructor(m_objectInfo);                                                                                             \
 		}

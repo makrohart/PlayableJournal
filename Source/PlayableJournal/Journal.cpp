@@ -25,7 +25,7 @@ void pj::journal::INFO(const char* pStr)
 {
 	const std::string commentPrefix = "// " + getTimeStamp() + " [INFO] ";
 
-	std::vector<std::string> strs = base::string::splitString(pStr, '\n');
+	std::vector<std::string> strs = base::string::splitString(pStr, "\n");
 	if (strs.empty())
 		return;
 
@@ -43,7 +43,7 @@ void pj::journal::FATAL(const char* pStr)
 {
 	const std::string commentPrefix = "// " + getTimeStamp() + " [FATAL] ";
 
-	std::vector<std::string> strs = base::string::splitString(pStr, '\n');
+	std::vector<std::string> strs = base::string::splitString(pStr, "\n");
 	if (strs.empty())
 		return;
 
@@ -61,7 +61,7 @@ void pj::journal::FATAL(const char* pStr)
 
 void pj::journal::PLAYABLE(const char* pStr)
 {
-	std::vector<std::string> strs = base::string::splitString(pStr, '\n');
+	std::vector<std::string> strs = base::string::splitString(pStr, "\n");
 	if (strs.empty())
 		return;
 
