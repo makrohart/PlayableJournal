@@ -21,6 +21,8 @@
 #include "JournalAspect.h"
 #include "Utils.h"
 #include "Journalable.h"
+#include "ObjectInfo.h"
+#include "StringUtils.h"
 
 namespace test
 {
@@ -73,13 +75,13 @@ namespace test
        void setCount(const int count) { m_count = count; };
 
     private:
-       int m_count;
+       int m_count = 0;
     };
 }
 
 // TestCase 1: Playable global method
-JOURNALABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
-PLAYABLE_METHOD(std::vector<std::string>, pj::utils, splitString, const char*, const char)
+JOURNALABLE_METHOD(std::vector<std::string>, base::string, splitString, const char*, const char)
+PLAYABLE_METHOD(std::vector<std::string>, base::string, splitString, const char*, const char)
 
 // TestCase 2: Playable class
 JOURNALABLE_CLASS_BEGIN(test, NativeClass)
@@ -102,11 +104,20 @@ ASPECT_VCLASS_BEGIN(pj::playable::PlayableAspect, test::TestDerivedClass)
 ASPECT_VMETHOD(void, print, std::string, int)
 ASPECT_VCLASS_END
 
+ASPECT_CLASS_BEGIN(pj::playable::PlayableAspect, test::NativeClass)
+ASPECT_MMETHOD(void, voidMethodInt, int)
+ASPECT_MMETHOD(std::string, stringMethodStringInt, const std::string&, const int)
+ASPECT_VCLASS_END
+
 int main()
 {
     test::TestDerivedClass testDerivedClass;
     aop::AspectProxy<test::TestDerivedClass, pj::playable::PlayableAspect> proxy(testDerivedClass);
     proxy.print("xyz_", 3);
+
+    test::NativeClass nativeClass;
+    aop::AspectProxy<test::NativeClass, pj::playable::PlayableAspect> nativeClassProxy(nativeClass);
+    nativeClassProxy.voidMethodInt(12);
 
     pj::player::Player player;
     const char* unitTest = "D:\\Projects\\PlayableJournal\\Test\\UnitTest\\unitTest.js";
