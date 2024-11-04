@@ -100,14 +100,19 @@ PLAYABLE_MMETHOD(std::string, stringMethodStringInt, std::string, int)
 PLAYABLE_MMETHODS_END
 PLAYABLE_ClASS_END(test, NativeClass)
 
+// TestCase 3: AOP derived class
 ASPECT_VCLASS_BEGIN(pj::playable::PlayableAspect, test::TestDerivedClass)
 ASPECT_VMETHOD(void, print, std::string, int)
 ASPECT_VCLASS_END
 
+// TestCase 4: AOP class
 ASPECT_CLASS_BEGIN(pj::playable::PlayableAspect, test::NativeClass)
 ASPECT_MMETHOD(void, voidMethodInt, int)
 ASPECT_MMETHOD(std::string, stringMethodStringInt, const std::string&, const int)
-ASPECT_VCLASS_END
+ASPECT_CLASS_END
+
+// TestCase 5: AOP method
+ASPECT_METHOD(pj::playable::PlayableAspect, std::vector<std::string>, base::string, splitString, const char*, const char)
 
 int main()
 {
@@ -118,6 +123,9 @@ int main()
     test::NativeClass nativeClass;
     aop::AspectProxy<test::NativeClass, pj::playable::PlayableAspect> nativeClassProxy(nativeClass);
     nativeClassProxy.voidMethodInt(12);
+
+    aop::AspectProxy<std::vector<std::string>(const char*, const char), pj::playable::PlayableAspect> splitStringProxy;
+    splitStringProxy.splitString("xyz_", 'y');
 
     pj::player::Player player;
     const char* unitTest = "D:\\Projects\\PlayableJournal\\Test\\UnitTest\\unitTest.js";

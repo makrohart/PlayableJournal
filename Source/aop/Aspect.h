@@ -36,7 +36,7 @@ namespace aop                                                                   
         {                                                                                                                               \
 			auto function = std::bind(&Type::Method, &m_target                                                                          \
                     FOR_EACH_WITH_STEP(COMMA_STD_PLACEHOLDER, STEP_1, 1, ArgType, __VA_ARGS__));                                        \
-            return invoke<ReturnType>(m_objectInfo, aop::MethodInfo(#Method), function,                                                 \
+            return invoke<ReturnType>(&m_objectInfo, aop::MethodInfo(#Method), function,                                                \
 			        _arg                                                                                                                \
 			        FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__));                                                       \
         }
@@ -83,7 +83,7 @@ namespace aop                                                                   
         {                                                                                                                               \
 			auto function = std::bind(&Type::Method, &m_target                                                                          \
                     FOR_EACH_WITH_STEP(COMMA_STD_PLACEHOLDER, STEP_1, 1, ArgType, __VA_ARGS__));                                        \
-            return invoke<ReturnType>(m_objectInfo, aop::MethodInfo(#Method), function,                                                 \
+            return invoke<ReturnType>(&m_objectInfo, aop::MethodInfo(#Method), function,                                                \
 			        _arg                                                                                                                \
 			        FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__));                                                       \
         }
@@ -105,7 +105,7 @@ namespace aop                                                                   
 /// <param name="ReturnType:">Return type of method</param>
 /// <param name="Method:">Method name</param>
 /// <param name="ArgType:">One argument type</param>
-#define ASPECT_METHOD(AspectClass, ReturnType, Method, ArgType, ...)                                          \
+#define ASPECT_METHOD(AspectClass, ReturnType, NameSpace, Method, ArgType, ...)                               \
 namespace aop                                                                                                 \
 {                                                                                                             \
 	template<>                                                                                                \
@@ -116,7 +116,7 @@ namespace aop                                                                   
                             FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)               \
                          )                                                                                    \
         {                                                                                                     \
-            return invoke<ReturnType>(aop::MethodInfo(#Method), ::Method,                                     \
+            return invoke<ReturnType>(nullptr, aop::MethodInfo(#Method), NameSpace::Method,                   \
 												_arg                                                          \
 												FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__)); \
         }                                                                                                     \
