@@ -27,7 +27,7 @@ namespace aop                                                                   
 /// </summary>
 /// <param name="ReturnType:">Return type of method</param>
 /// <param name="Method:">Method name</param>
-/// <param name="ArgType:">One argument type</param>
+/// <param name="...:">Argument types</param>
 #define ASPECT_VMETHOD(ReturnType, Method, ...)                                                                                                      \
         virtual ReturnType Method(ARGTYPE_ARG(__VA_ARGS__)) override									                                             \
         {                                                                                                                                            \
@@ -69,7 +69,7 @@ namespace aop                                                                   
 /// </summary>
 /// <param name="ReturnType:">Return type of method</param>
 /// <param name="Method:">Method name</param>
-/// <param name="ArgType:">One argument type</param>
+/// <param name="...:">Argument types</param>
 #define ASPECT_MMETHOD(ReturnType, Method, ...)                                                                                                      \
         ReturnType Method(ARGTYPE_ARG(__VA_ARGS__))                                                                                                  \
         {                                                                                                                                            \
@@ -94,23 +94,18 @@ namespace aop                                                                   
 /// </summary>
 /// <param name="ReturnType:">Return type of method</param>
 /// <param name="Method:">Method name</param>
-/// <param name="ArgType:">One argument type</param>
-#define ASPECT_METHOD(AspectClass, ReturnType, NameSpace, Method, ArgType, ...)                               \
-namespace aop                                                                                                 \
-{                                                                                                             \
-	template<>                                                                                                \
-    struct AspectProxy<ReturnType(ArgType,  __VA_ARGS__), AspectClass> : AspectClass                          \
-    {                                                                                                         \
-        static ReturnType Method(                                                                             \
-							ArgType _arg                                                                      \
-                            FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)               \
-                         )                                                                                    \
-        {                                                                                                     \
-            return invoke<ReturnType>(nullptr, aop::MethodInfo(#Method), NameSpace::Method,                   \
-												_arg                                                          \
-												FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__)); \
-        }                                                                                                     \
-	};                                                                                                        \
+/// <param name="...:">Argument types</param>
+#define ASPECT_METHOD(AspectClass, ReturnType, NameSpace, Method, ...)                                                                                  \
+namespace aop                                                                                                                                           \
+{                                                                                                                                                       \
+	template<>                                                                                                                                          \
+    struct AspectProxy<ReturnType(__VA_ARGS__), AspectClass> : AspectClass                                                                              \
+    {                                                                                                                                                   \
+        static ReturnType Method(ARGTYPE_ARG(__VA_ARGS__))                                                                                              \
+        {                                                                                                                                               \
+            return invoke<ReturnType>(nullptr, aop::MethodInfo(#Method), NameSpace::Method FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, _arg, __VA_ARGS__)); \
+        }                                                                                                                                               \
+	};                                                                                                                                                  \
 }
 
 namespace aop
