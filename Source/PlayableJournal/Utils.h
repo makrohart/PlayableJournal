@@ -9,34 +9,6 @@ namespace pj
 {
 	namespace utils
 	{
-		inline std::vector<std::string> splitString(const char* str, const char separator)
-		{
-			std::vector<std::string> strs;
-			int subStrLen = 1;
-			const char* subStr = str;
-			while (true)
-			{
-				if (*str == separator)
-				{
-					strs.emplace_back(subStr, subStrLen);
-					subStr = ++str;
-					subStrLen = 1;
-					continue;
-				}
-
-				if (*str == '\0')
-				{
-					strs.emplace_back(subStr, subStrLen);
-					break;
-				}
-
-				str++;
-				subStrLen++;
-			}
-
-			return strs;
-		}
-
 		inline std::string formatString(const char* pStr) { return pStr; }
 
 		template<typename... Args>
@@ -73,6 +45,13 @@ namespace pj
 		inline std::string toString(const std::string& value)
 		{
 			return '"' + value + '"';
+		}
+
+		template<typename T>
+		std::string toStringFromArgs(const char* pSeparator, T argFirst)
+		{
+			std::string str = pj::utils::toString(argFirst);
+			return str;
 		}
 
 		template<typename T, typename U>

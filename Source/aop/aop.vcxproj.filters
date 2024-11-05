@@ -21,5 +21,8 @@
     <ClInclude Include="MethodInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

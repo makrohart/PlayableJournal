@@ -3,6 +3,7 @@
 
 #include "functional"
 #include "Journal.h"
+#include "PlayableAspect.h"
 #include "string"
 #include "Utils.h"
 
@@ -16,68 +17,27 @@
 // recorded as js-syntax compliant code.
 // =====================================================================================================
 
-template<typename T>
-struct Journalable;
-// =====================================================================================================
-
 /// <param name="NameSpace:">Namespace of class</param>
 /// <param name="Class:">Class</param>
-#define JOURNALABLE_CLASS_BEGIN(NameSpace, Class)                                     \
-template<>                                                                            \
-struct Journalable<NameSpace::Class>                                                  \
-{                                                                                     \
-	Journalable()                                                                     \
-	{                                                                                 \
-		m_lastId++;                                                                   \
-		m_id = m_lastId;                                                              \
-		m_instanceName = pj::utils::toLower(#Class) + "_" + std::to_string(m_lastId); \
-		pj::journal::PLAYABLE(m_instanceName.c_str(), " = new ", #Class, "()", ";");  \
-	}
+#define JOURNALABLE_CLASS_BEGIN(NameSpace, Class) \
+ASPECT_CLASS_BEGIN(pj::playable::PlayableAspect, NameSpace::Class)
 
 /// <param name="Property:">Property of class</param>
 /// <param name="PropertyType:">Data type of one property</param>
-#define JOURNALABLE_PROPERTY(Property, PropertyType)                                                                  \
-PropertyType get##Property()                                                                                          \
-{                                                                                                                     \
-	const std::string propertyName = pj::utils::toLower(#Property) + "_" + std::to_string(m_id);                      \
-	pj::journal::PLAYABLE(propertyName.c_str(), " = ", m_instanceName.c_str(), ".", #Property, ";");                  \
-	return m_object.get##Property();                                                                                  \
-}                                                                                                                     \
-void set##Property(const PropertyType& value)                                                                         \
-{                                                                                                                     \
-	pj::journal::PLAYABLE(m_instanceName.c_str(), ".", #Property, "= ", pj::utils::toString(value).c_str(), ";");     \
-	m_object.set##Property(value);                                                                                    \
-}
+#define JOURNALABLE_PROPERTY(Property, PropertyType) \
+ASPECT_MMETHOD(PropertyType, get##Property)               \
+ASPECT_MMETHOD(void, set##Property, PropertyType)
 
 /// <param name="ReturnType:">Return type of method return value</param>
 /// <param name="Method:">One global method</param>
 /// <param name="ArgType:">One argument of method</param>
 /// <param name="...:">Argument types of method</param>
-#define JOURNALABLE_MMETHOD(ReturnType, Method, ArgType, ...)                                \
-	ReturnType Method(                                                                       \
-		ArgType _arg                                                                         \
-		FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)      \
-	)                                                                                        \
-    {                                                                                        \
-	    pj::journal::PLAYABLE(m_instanceName.c_str(), ".", #Method, "(",                     \
-			pj::utils::toString(_arg).c_str()                                                \
-			FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARG_TOSTRING, STEP_ARG, __arg, __VA_ARGS__) \
-		, ");");                                                                             \
-	    return m_object.Method(                                                              \
-			_arg                                                                             \
-			FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__)          \
-		);                                                                                   \
-    }
+#define JOURNALABLE_MMETHOD(ReturnType, Method, ...)                                \
+ASPECT_MMETHOD(ReturnType, Method, __VA_ARGS__)
 
 /// <param name="NameSpace:">Namespace of class</param>
 /// <param name="Class:">Class</param>
-#define JOURNALABLE_CLASS_END(NameSpace, Class)                                       \
-private:                                                                              \
-	inline static int m_lastId = 0;                                                   \
-	int m_id;                                                                         \
-	std::string m_instanceName;                                                       \
-	NameSpace::Class m_object;                                                        \
-};                          
+#define JOURNALABLE_CLASS_END(NameSpace, Class) ASPECT_CLASS_END           
 // =====================================================================================================
 
 // ---------------------------------------------- SUMMARY ----------------------------------------------
@@ -94,31 +54,5 @@ private:                                                                        
 /// <param name="Method:">One global method</param>
 /// <param name="ArgType:">One argument of method</param>
 /// <param name="...:">Argument types of method</param>
-#define JOURNALABLE_METHOD(ReturnType, NameSpace, Method, ArgType, ...)                              \
-namespace journalable                                                                                \
-{                                                                                                    \
-	ReturnType Method(                                                                               \
-		ArgType _arg                                                                                 \
-		FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)              \
-	)                                                                                                \
-    {                                                                                                \
-	    pj::journal::PLAYABLE(#Method, "(",                                                          \
-			pj::utils::toString(_arg).c_str()                                                        \
-			FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARG_TOSTRING, STEP_ARG, __arg, __VA_ARGS__)         \
-		, ");");                                                                                     \
-	    return NameSpace::Method(                                                                    \
-			_arg                                                                                     \
-			FOR_EACH_WITH_STEP(JOURNALABLE_COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__)                  \
-		);                                                                                           \
-    };                                                                                               \
-};
-// =====================================================================================================
-
-#define JOURNALABLE_COMMA_ARGTYPE_ARG(Arg, ArgType) , ArgType Arg
-
-#define JOURNALABLE_COMMA_ARG_TOSTRING(Arg, ArgType) , ", ", pj::utils::toString(Arg).c_str()
-
-#define JOURNALABLE_COMMA_ARG(Arg, ArgType) , Arg
-
-#define STEP_ARG(Arg) _Arg
-// =====================================================================================================
+#define JOURNALABLE_METHOD(ReturnType, NameSpace, Method, ...)                              \
+ASPECT_METHOD(pj::playable::PlayableAspect, ReturnType, NameSpace, Method, __VA_ARGS__)
