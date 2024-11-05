@@ -10,16 +10,16 @@
 /// </summary>
 /// <param name="AspectClass:">Aspect name</param>
 /// <param name="Class:">Target class</param>
-#define ASPECT_VCLASS_BEGIN(AspectClass, Class)                                                                                     \
-namespace aop                                                                                                                       \
-{                                                                                                                                   \
-	template<>                                                                                                                      \
-    struct AspectProxy<Class, AspectClass> : Class, AspectClass                                                                     \
-    {                                                                                                                               \
-        using Type = Class;                                                                                                         \
-		AspectProxy(Type target) : m_target(target), m_objectInfo(*(base::string::splitString(#Class, "::").cend() - 1), m_lastId++)\
-		{                                                                                                                           \
-		  preConstructor(m_objectInfo);                                                                                             \
+#define ASPECT_VCLASS_BEGIN(AspectClass, Class)                                                                                      \
+namespace aop                                                                                                                        \
+{                                                                                                                                    \
+	template<>                                                                                                                       \
+    struct AspectProxy<Class, AspectClass> : Class, AspectClass                                                                      \
+    {                                                                                                                                \
+        using Type = Class;                                                                                                          \
+		AspectProxy(Type target) : m_target(target), m_objectInfo(*(base::string::splitString(#Class, "::").cend() - 1), m_lastId++) \
+		{                                                                                                                            \
+		  preConstructor(m_objectInfo);                                                                                              \
 		}
 
 /// <summary>
@@ -28,17 +28,12 @@ namespace aop                                                                   
 /// <param name="ReturnType:">Return type of method</param>
 /// <param name="Method:">Method name</param>
 /// <param name="ArgType:">One argument type</param>
-#define ASPECT_VMETHOD(ReturnType, Method, ArgType, ...)                                                                                \
-        virtual ReturnType Method(										                                                                \
-                                    ArgType _arg                                                                                        \
-                                    FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)                                 \
-                                 ) override                                                                                             \
-        {                                                                                                                               \
-			auto function = std::bind(&Type::Method, &m_target                                                                          \
-                    FOR_EACH_WITH_STEP(COMMA_STD_PLACEHOLDER, STEP_1, 1, ArgType, __VA_ARGS__));                                        \
-            return invoke<ReturnType>(&m_objectInfo, aop::MethodInfo(#Method), function,                                                \
-			        _arg                                                                                                                \
-			        FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__));                                                       \
+#define ASPECT_VMETHOD(ReturnType, Method, ...)                                                                                                      \
+        virtual ReturnType Method(ARGTYPE_ARG(__VA_ARGS__)) override									                                             \
+        {                                                                                                                                            \
+			auto function = std::bind(&Type::Method, &m_target                                                                                       \
+                    FOR_EACH_WITH_STEP(COMMA_STD_PLACEHOLDER, STEP_1, 1, __VA_ARGS__));                                                              \
+            return invoke<ReturnType>(&m_objectInfo, aop::MethodInfo(#Method), function FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, _arg, __VA_ARGS__)); \
         }
 
 /// <summary>
@@ -75,17 +70,12 @@ namespace aop                                                                   
 /// <param name="ReturnType:">Return type of method</param>
 /// <param name="Method:">Method name</param>
 /// <param name="ArgType:">One argument type</param>
-#define ASPECT_MMETHOD(ReturnType, Method, ArgType, ...)                                                                                \
-        ReturnType Method(                                                                                                              \
-                                    ArgType _arg                                                                                        \
-                                    FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)                                 \
-                                 )                                                                                                      \
-        {                                                                                                                               \
-			auto function = std::bind(&Type::Method, &m_target                                                                          \
-                    FOR_EACH_WITH_STEP(COMMA_STD_PLACEHOLDER, STEP_1, 1, ArgType, __VA_ARGS__));                                        \
-            return invoke<ReturnType>(&m_objectInfo, aop::MethodInfo(#Method), function,                                                \
-			        _arg                                                                                                                \
-			        FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__));                                                       \
+#define ASPECT_MMETHOD(ReturnType, Method, ...)                                                                                                      \
+        ReturnType Method(ARGTYPE_ARG(__VA_ARGS__))                                                                                                  \
+        {                                                                                                                                            \
+			auto function = std::bind(&Type::Method, &m_target                                                                                       \
+                    FOR_EACH_WITH_STEP(COMMA_STD_PLACEHOLDER, STEP_1, 1, __VA_ARGS__));                                                              \
+            return invoke<ReturnType>(&m_objectInfo, aop::MethodInfo(#Method), function FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, _arg, __VA_ARGS__)); \
         }
 
 /// <summary>

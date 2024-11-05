@@ -26,17 +26,22 @@
   __VA_OPT__(FOR_EACH_2_AGAIN PARENS (Macro, __VA_ARGS__))
 #define FOR_EACH_2_AGAIN() FOR_EACH_2_HELPER
 
-#define FOR_EACH_WITH_STEP(Macro, Step, Begin, ...)                                  \
-  __VA_OPT__(EXPAND(FOR_EACH_WITH_STEP_HELPER(Macro, Step, Begin, __VA_ARGS__)))
-#define FOR_EACH_WITH_STEP_HELPER(Macro, Step, Begin, Arg, ...)               \
-Macro(Begin, Arg)                                                             \
-  __VA_OPT__(FOR_EACH_WITH_STEP_AGAIN PARENS (Macro, Step, Step(Begin) , __VA_ARGS__))
+#define FOR_EACH_WITH_STEP(Macro, StepMacro, Begin, ...)                                  \
+  __VA_OPT__(EXPAND(FOR_EACH_WITH_STEP_HELPER(Macro, StepMacro, Begin, __VA_ARGS__)))
+#define FOR_EACH_WITH_STEP_HELPER(Macro, StepMacro, Begin, Arg, ...)               \
+Macro(Begin, Arg)                                               \
+  __VA_OPT__(FOR_EACH_WITH_STEP_AGAIN PARENS (Macro, StepMacro, StepMacro(Begin) , __VA_ARGS__))
 #define FOR_EACH_WITH_STEP_AGAIN() FOR_EACH_WITH_STEP_HELPER
 
 #define STEP_1(ii) ii+1
-#define STEP_ARG(Arg) _Arg
+#define STEP_ARG(Arg) _##Arg
 
 #define COMMA_ARGTYPE_ARG(Arg, ArgType) , ArgType Arg
 #define COMMA_ARG(Arg, ArgType) , Arg
 #define COMMA_STD_PLACEHOLDER(ArgIndex, ArgType) , std::_Ph<ArgIndex>{}
 
+#define ARGTYPE_ARG(...) __VA_OPT__(ARGTYPE_ARG_IMPL(__VA_ARGS__))
+#define ARGTYPE_ARG_IMPL(ArgType, ...) ArgType _arg FOR_EACH_WITH_STEP(COMMA_ARGTYPE_ARG, STEP_ARG, __arg, __VA_ARGS__)
+
+#define ARG(...) __VA_OPT__(ARG_IMPL(__VA_ARGS__))
+#define ARG_IMPL(ArgType, ...) _arg FOR_EACH_WITH_STEP(COMMA_ARG, STEP_ARG, __arg, __VA_ARGS__)
