@@ -24,7 +24,9 @@ namespace pj
 			template<typename R, typename F, typename... Args>
 			static R invoke(const aop::ObjectInfo* pObjectInfo, const aop::MethodInfo& methodInfo, const F& func, Args&&... args)
 			{
-				std::string argsStr = pj::utils::toStringFromArgs(", ", std::forward<Args>(args)...);
+				std::string argsStr = "";
+				if constexpr (sizeof...(Args) != 0)
+					argsStr = pj::utils::toStringFromArgs(", ", std::forward<Args>(args)...);
 
 				if (pObjectInfo)
 				{

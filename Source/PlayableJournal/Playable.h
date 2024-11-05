@@ -53,7 +53,7 @@
 #define PLAYABLE_CLASS_BEGIN(NameSpace, Class)                                                                           \
 struct Playable_##Class##                                                                                                \
 {                                                                                                                        \
-    using Type = Journalable<NameSpace::Class>;                                                                          \
+    using Type = aop::AspectProxy<NameSpace::Class, pj::playable::PlayableAspect>;                                       \
     Playable_##Class##()                                                                                                 \
     {                                                                                                                    \
         std::vector<pj::playable::PlayableMethod> methods;                                                               \
@@ -67,7 +67,7 @@ struct Playable_##Class##                                                       
     static void New(const v8::FunctionCallbackInfo<v8::Value>& args)                                                     \
     {                                                                                                                    \
         v8::Isolate* pIsolate = args.GetIsolate();                                                                       \
-        Type* p##Class = new Type();                                                                                     \
+        Type* p##Class = new Type(NameSpace::Class());                                                                   \
         args.This()->SetInternalField(0, v8::External::New(pIsolate, p##Class));                                         \
     }                                                                                                                                                                                                     
 
@@ -175,7 +175,8 @@ struct Playable_##Method##                                                      
             [](const v8::FunctionCallbackInfo<v8::Value>& args) {                                             \
         	    v8::Isolate* pIsolate = args.GetIsolate();                                                    \
 	            v8::HandleScope handleScope(pIsolate);                                                        \
-                executePlayableMethod<ReturnType>(journalable::Method, pIsolate, args                         \
+                aop::AspectProxy<ReturnType(__VA_ARGS__), pj::playable::PlayableAspect> methodProxy;          \
+                executePlayableMethod<ReturnType>(methodProxy.Method, pIsolate, args                          \
                     FOR_EACH_WITH_STEP(PLAYABLE_COMMA_NATIVE_ARG, STEP_1, 0, __VA_ARGS__));                   \
             }                                                                                                 \
         };                                                                                                    \
