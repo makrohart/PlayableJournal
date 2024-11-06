@@ -19,21 +19,9 @@ namespace pj
 		}
 
 		template<typename T>
-		std::string toString(T value)
+		inline std::string toString(T value)
 		{
 			return std::to_string(value);
-		}
-
-		inline std::string toString(const char* value)
-		{
-			return std::string(value);
-		}
-
-		inline std::string toString(const char value)
-		{
-			char str[2]{ 0 };
-			str[0] = value;
-			return std::string(str);
 		}
 
 		/// <summary>
@@ -42,7 +30,34 @@ namespace pj
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		inline std::string toString(const std::string& value)
+		template<>
+		inline std::string toString(const char* value)
+		{
+			return '"' + std::string(value) + '"';
+		}
+
+		/// <summary>
+		/// E.g. "std::string str" => ""std::string str""
+		/// TODO: add this to regression
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		template<>
+		inline std::string toString(const char value)
+		{
+			char str[2]{ 0 };
+			str[0] = value;
+			return '"' + std::string(str) + '"';
+		}
+
+		/// <summary>
+		/// E.g. "std::string str" => ""std::string str""
+		/// TODO: add this to regression
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		template<>
+		inline std::string toString(std::string value)
 		{
 			return '"' + value + '"';
 		}
