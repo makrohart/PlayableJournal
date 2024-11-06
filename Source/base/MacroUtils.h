@@ -26,10 +26,10 @@
   __VA_OPT__(FOR_EACH_2_AGAIN PARENS (Macro, __VA_ARGS__))
 #define FOR_EACH_2_AGAIN() FOR_EACH_2_HELPER
 
-#define FOR_EACH_WITH_STEP(Macro, StepMacro, Begin, ...)                                  \
+#define FOR_EACH_WITH_STEP(Macro, StepMacro, Begin, ...)                                         \
   __VA_OPT__(EXPAND(FOR_EACH_WITH_STEP_HELPER(Macro, StepMacro, Begin, __VA_ARGS__)))
-#define FOR_EACH_WITH_STEP_HELPER(Macro, StepMacro, Begin, Arg, ...)               \
-Macro(Begin, Arg)                                               \
+#define FOR_EACH_WITH_STEP_HELPER(Macro, StepMacro, Begin, Arg, ...)                             \
+Macro(Begin, Arg)                                                                                \
   __VA_OPT__(FOR_EACH_WITH_STEP_AGAIN PARENS (Macro, StepMacro, StepMacro(Begin) , __VA_ARGS__))
 #define FOR_EACH_WITH_STEP_AGAIN() FOR_EACH_WITH_STEP_HELPER
 
