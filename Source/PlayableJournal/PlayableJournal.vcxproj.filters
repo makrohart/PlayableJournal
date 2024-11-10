@@ -30,9 +30,6 @@
     <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Journalist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="JournalEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -69,6 +66,12 @@
     <ClInclude Include="PlayableAspect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FileJournalist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JournalistManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -77,14 +80,22 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Journalist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Journal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlayableManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileJournalist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JournalistManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="IJournalist.h">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
