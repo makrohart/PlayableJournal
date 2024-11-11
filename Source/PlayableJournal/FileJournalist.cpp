@@ -1,21 +1,46 @@
 #include "pch.h"
 #include "FileJournalist.h"
 #include "filesystem"
+#include "json.hpp"
 
 namespace
 {
-	const char journalFilePrefix[] = "Journal";
-	const char journalExtention[] = ".js";
+	const char jsExtention[] = ".js";
+
+	const std::vector<std::string> journalConfigPathLists
+	{
+		"Journal.json",                         // Same path where executable application locates
+		"..\\..\\PlayableJournal\\Journal.json" // Source code
+	};
+
+	nlohmann::json getJournalConfig()
+	{
+		std::string json;
+		for (const auto& journalConfigPath : journalConfigPathLists)
+		{
+			if (std::filesystem::exists(journalConfigPath))
+			{
+				json = journalConfigPath;
+				break;
+			}
+		}
+		std::ifstream jsonStream(json);
+		return nlohmann::json::parse(jsonStream);
+	}
 }
 
 pj::journal::FileJournalist::FileJournalist()
 {
-	std::string journalPath = std::string(journalFilePrefix) + std::string(journalExtention);
+	const nlohmann::json journalConfig = getJournalConfig();
+	const std::string journalFilePrefix = journalConfig["JournalName"];
+	const std::string journalFileDirectory = journalConfig["Path"]["Journalable"];
+
+	std::string journalPath = journalFileDirectory + std::string(journalFilePrefix) + std::string(jsExtention);
 	int postfix = 1;
 	while (std::filesystem::exists(journalPath.c_str()))
 	{
 		std::ostringstream oss;
-		oss << journalFilePrefix << "." << std::setw(4) << std::setfill('0') << postfix++ << journalExtention;
+		oss << journalFileDirectory << journalFilePrefix << "." << std::setw(4) << std::setfill('0') << postfix++ << jsExtention;
 		journalPath = oss.str();
 	}
 

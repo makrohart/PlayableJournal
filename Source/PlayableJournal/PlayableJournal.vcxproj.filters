@@ -98,4 +98,7 @@
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Journal.json" />
+  </ItemGroup>
 </Project>
