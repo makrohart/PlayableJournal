@@ -15,7 +15,7 @@ namespace pj
         v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const std::string& value)
         {
             v8::EscapableHandleScope handle_scope(pIsolate);
-            return handle_scope.Escape(v8::String::NewFromUtf8(pIsolate, value.c_str()).ToLocalChecked());
+            return handle_scope.Escape(v8::String::NewFromUtf8(pIsolate, value.c_str()));
         }
 
         template<>
