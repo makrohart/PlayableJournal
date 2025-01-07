@@ -3,13 +3,12 @@
 
 #pragma comment(lib, "PlayableJournal.lib")
 #ifdef _DEBUG
-#pragma comment(lib, "debug\\v8_monolith.lib")
+#pragma comment(lib, "Debug\\v8.dll.lib")
+#pragma comment(lib, "Debug\\v8_libbase.dll.lib")
+#pragma comment(lib, "Debug\\v8_libplatform.dll.lib")
 #else
 #pragma comment(lib, "release\\v8_monolith.lib")
 #endif
-
-#pragma comment(lib, "DbgHelp.lib")
-#pragma comment(lib, "winmm.lib")
 
 #include <iostream>
 

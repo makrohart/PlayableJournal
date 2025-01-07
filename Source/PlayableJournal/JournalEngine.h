@@ -31,7 +31,7 @@ namespace pj
 			{
 				m_pIsolate->Dispose();
 				v8::V8::Dispose();
-				v8::V8::DisposePlatform();
+				// v8::V8::DisposePlatform();
 				delete m_createParams.array_buffer_allocator;
 			}
 
@@ -44,7 +44,7 @@ namespace pj
 					// Enter the execution environment before evaluating any code.
 					v8::HandleScope handle_scope(m_pIsolate);
 					v8::Context::Scope context_scope(context.Get(m_pIsolate));
-					v8::Local<v8::String> file_name = v8::String::NewFromUtf8(m_pIsolate, scriptPath).ToLocalChecked();
+					v8::Local<v8::String> file_name = v8::String::NewFromUtf8(m_pIsolate, scriptPath);
 					v8::Local<v8::String> source;
 					if (!pj::utils::ReadFile(m_pIsolate, scriptPath).ToLocal(&source))
 						pj::journal::FATAL(std::format("Error reading '%s'\n", scriptPath).c_str());
@@ -95,7 +95,7 @@ namespace pj
 					const char* className = playableClass.getName().c_str();
 					// Bind constructor
 					v8::Local<v8::FunctionTemplate> classTemplate = v8::FunctionTemplate::New(pIsolate, playableClass.getConstructor());
-					classTemplate->SetClassName(v8::String::NewFromUtf8(pIsolate, className).ToLocalChecked());
+					classTemplate->SetClassName(v8::String::NewFromUtf8(pIsolate, className));
 					globalTemplate->Set(pIsolate, className, classTemplate);
 					v8::Local<v8::ObjectTemplate> classPrototype = classTemplate->PrototypeTemplate();
 
@@ -108,7 +108,7 @@ namespace pj
 
 					// Bind getters and setters
 					for (auto& accesser : playableClass.getAccessers())
-						classInstance->SetAccessor(v8::String::NewFromUtf8(pIsolate, accesser.getName().c_str()).ToLocalChecked(), accesser.getGetter(), accesser.getSetter());
+						classInstance->SetNativeDataProperty(v8::String::NewFromUtf8(pIsolate, accesser.getName().c_str()), accesser.getGetter(), accesser.getSetter());
 				}
 
 				v8::Local<v8::Context> context = v8::Context::New(pIsolate, nullptr, globalTemplate);
@@ -120,7 +120,7 @@ namespace pj
 			{
 				v8::HandleScope handle_scope(m_pIsolate);
 				v8::TryCatch try_catch(m_pIsolate);
-				v8::ScriptOrigin origin(m_pIsolate, name);
+				v8::ScriptOrigin origin(name);
 				v8::Local<v8::Context> context(m_pIsolate->GetCurrentContext());
 				v8::Local<v8::Script> script;
 				if (!v8::Script::Compile(context, source, &origin).ToLocal(&script))

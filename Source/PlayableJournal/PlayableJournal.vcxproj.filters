@@ -97,6 +97,7 @@
     <None Include="IJournalist.h">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Journal.json" />
