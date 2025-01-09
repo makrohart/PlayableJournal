@@ -7,7 +7,9 @@
 #pragma comment(lib, "Debug\\v8_libbase.dll.lib")
 #pragma comment(lib, "Debug\\v8_libplatform.dll.lib")
 #else
-#pragma comment(lib, "release\\v8_monolith.lib")
+#pragma comment(lib, "Release\\v8.dll.lib")
+#pragma comment(lib, "Release\\v8_libbase.dll.lib")
+#pragma comment(lib, "Release\\v8_libplatform.dll.lib")
 #endif
 
 #include <iostream>

@@ -1,24 +1,22 @@
 #pragma once
 #include "DllExport.h"
 
-#include "JournalEngine.h"
+#include "PlayableEngine.h"
 
 namespace pj
 {
 	namespace player
 	{
-		class Player
+		class PLAYABLEJOURNAL_API Player
 		{
 		public:
-			inline Player() = default;
+			Player() = default;
+			~Player() = default;
 
-			inline void play(const char* pJournalPath)
-			{
-				m_journalEngine.compileAndExecute(pJournalPath);
-			}
+			void play(const char* pJournalPath);
 
 		private:
-			pj::journal::JournalEngine m_journalEngine;
+			pj::playable::PlayableEngine m_playableEngine;
 		};
 	}
 }

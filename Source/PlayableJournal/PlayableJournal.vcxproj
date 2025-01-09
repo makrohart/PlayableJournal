@@ -134,6 +134,9 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)packages\v8-v140-x64.7.4.288.11\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(SolutionDir)packages\v8.redist-v140-x64.7.4.288.11\lib\$(Configuration)\*.* $(OutDir)  /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -159,6 +162,9 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)packages\v8-v140-x64.7.4.288.11\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(SolutionDir)packages\v8.redist-v140-x64.7.4.288.11\lib\$(Configuration)\*.* $(OutDir)  /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DllExport.h" />
@@ -167,13 +173,13 @@
     <ClInclude Include="Journal.h" />
     <ClInclude Include="Journalable.h" />
     <ClInclude Include="JournalAspect.h" />
-    <ClInclude Include="JournalEngine.h" />
     <ClInclude Include="JournalistManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Playable.h" />
     <ClInclude Include="PlayableAccesser.h" />
     <ClInclude Include="PlayableAspect.h" />
     <ClInclude Include="PlayableClass.h" />
+    <ClInclude Include="PlayableEngine.h" />
     <ClInclude Include="PlayableManager.h" />
     <ClInclude Include="PlayableMethod.h" />
     <ClInclude Include="Player.h" />
@@ -192,7 +198,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PlayableEngine.cpp" />
     <ClCompile Include="PlayableManager.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="IJournalist.h" />
