@@ -126,8 +126,14 @@
       <AdditionalLibraryDirectories>$(SolutionDir)packages\v8-v140-x64.7.4.288.11\lib\;$(SolutionDir)..\$(Configuration)$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy $(OutDir)..\..\*.* $(OutDir)  /y</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy $(OutDir)..\..\*.* $(OutDir)  /y
+xcopy $(SolutionDir)packages\v8.redist-v140-x64.7.4.288.11\lib\$(Configuration)\*.bin $(SolutionDir)Test\UnitTest /y
+xcopy $(SolutionDir)packages\v8.redist-v140-x64.7.4.288.11\lib\$(Configuration)\*.dat $(SolutionDir)Test\UnitTest  /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -150,8 +156,14 @@
       <AdditionalLibraryDirectories>$(SolutionDir)packages\v8-v140-x64.7.4.288.11\lib\;$(SolutionDir)..\$(Configuration)$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy $(OutDir)..\..\*.* $(OutDir)  /y</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy $(OutDir)..\..\*.* $(OutDir)  /y
+xcopy $(SolutionDir)packages\v8.redist-v140-x64.7.4.288.11\lib\$(Configuration)\*.bin $(SolutionDir)Test\UnitTest /y
+xcopy $(SolutionDir)packages\v8.redist-v140-x64.7.4.288.11\lib\$(Configuration)\*.dat $(SolutionDir)Test\UnitTest  /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="UnitTest.cpp" />
