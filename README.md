@@ -8,8 +8,8 @@ A cutting-edge C++ log framework (dynamic link library) designed to revolutioniz
 # Prerequisites
 MS Visual Studio 2022 with C++ 20 is required
 # Installation
-1. Fetch the code via git
-2. Complie dll file
+1. Fetch the latest code
+2. Compile
 # Tutorial
 #### Create and setup a blank C++ project
 1. Setup proper output and intermediate directory.
@@ -21,13 +21,14 @@ MS Visual Studio 2022 with C++ 20 is required
 ```
 #pragma comment(lib, "PlayableJournal.lib")
 #ifdef _DEBUG
-#pragma comment(lib, "debug\\v8_monolith.lib")
+#pragma comment(lib, "Debug\\v8.dll.lib")
+#pragma comment(lib, "Debug\\v8_libbase.dll.lib")
+#pragma comment(lib, "Debug\\v8_libplatform.dll.lib")
 #else
-#pragma comment(lib, "release\\v8_monolith.lib")
+#pragma comment(lib, "Release\\v8.dll.lib")
+#pragma comment(lib, "Release\\v8_libbase.dll.lib")
+#pragma comment(lib, "Release\\v8_libplatform.dll.lib")
 #endif
-// Following libs for Win OS may necessary
-#pragma comment(lib, "DbgHelp.lib")
-#pragma comment(lib, "winmm.lib")
 ```
 7. Resolve `_ITERATOR_DEBUG_LEVEL` error under debug mode if occurs by setting `_ITERATOR_DEBUG_LEVEL=0` in preprocessor definition under "Properties -> C/C++ -> Preprocessor".
 8. Set `V8_COMPRESS_POINTERS=1` and `V8_ENABLE_SANDBOX` if necessary for both debug and release mode.
@@ -105,7 +106,14 @@ MS Visual Studio 2022 with C++ 20 is required
   ```
   If you run the application, the object and its methods are recalled successfully. This will also generate a corrosponding journal file (in format of "journal.js") under the same folder where executatable application locates. The journal file will log the detailed information you want, as well as the method you want to re-play. You can then try replay the journal file!
 # Known Issues
-1. V8 objects like v8::Array generated in callback from other dll from PlayableJournal cause access violation reading location. Therefore, we use only header files to generate native function callbacks for V8 engine.
+1. Static Link Library is not supported as V8 objects generated in heap owned by lib, in which case the caller who use static link liarary will encounter crashes when operate objects.
+2. To avoid this, most part of code logic related to bindings from C++ to JS and initilize V8 engine should be moved to header.
 # Roadmap
-TBDTBDTBDBTDTBDTBDTBDTBDTBDTBD
+1. Asynchronous logging
+2. Support complete feature for recording C++ operation
+3. JS code generated based on AST is more ideally.
+4. Debugg feature
+5. More feature for testing
+...
+
 
