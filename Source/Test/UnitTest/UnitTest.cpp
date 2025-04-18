@@ -15,111 +15,42 @@
 #include <iostream>
 
 #include "functional"
-#include "Journalable.h"
-#include "Playable.h"
-#include "PlayableAspect.h"
 #include "Player.h"
-#include "JournalAspect.h"
 #include "Utils.h"
-#include "Journalable.h"
-#include "ObjectInfo.h"
 #include "StringUtils.h"
-
-namespace test
-{
-    class TestBaseClass
-    {
-    public:
-        virtual void print(std::string str, int count)
-        {
-            std::string message;
-            for (int ii = count; ii != 0; ii--)
-                message += str;
-
-            pj::journal::INFO("test::TestBaseClass::print: ", message.c_str());
-        }
-    };
-
-    class TestDerivedClass : TestBaseClass
-    {
-    public:
-        virtual void print(std::string str, int count) override
-        {
-            std::string message;
-            for (int ii = count; ii != 0; ii--)
-                message += str;
-
-            pj::journal::INFO("test::testDerivedClass::print: ", message.c_str());
-        }
-    };
-
-    class NativeClass
-    {
-    public:
-       void voidMethodInt(int count) 
-       {
-           m_count = count;
-           pj::journal::INFO("test::NativeClass::voidMethodInt: ", pj::utils::toString(count).c_str());
-       };
-
-       std::string stringMethodStringInt(const std::string& str, const int count)
-       {
-           m_count = count;
-           std::string retVal;
-           for (int ii = count; ii != 0; ii--)
-               retVal += str;
-
-           return retVal;
-       }
-
-       int getCount() { return m_count; };
-       void setCount(const int count) { m_count = count; };
-
-    private:
-       int m_count = 0;
-    };
-}
-
-/// <summary>
-/// Test case 1: std::vector<std::string> base::string::splitString(const char* str, const char* separator)
-/// </summary>
-JOURNALABLE_METHOD(std::vector<std::string>, base::string, splitString, const char*, const char*)
-PLAYABLE_METHOD(std::vector<std::string>, base::string, splitString, const char*, const char*)
-
-/// <summary>
-/// Test case 2: Journal playable feature on class object
-/// </summary>
-JOURNALABLE_CLASS_BEGIN(test, NativeClass)
-JOURNALABLE_PROPERTY(Count, int)
-JOURNALABLE_MMETHOD(void, voidMethodInt, int)
-JOURNALABLE_MMETHOD(std::string, stringMethodStringInt, const std::string&, const int)
-JOURNALABLE_CLASS_END(test, NativeClass)
-
-PLAYABLE_CLASS_BEGIN(test, NativeClass)
-PLAYABLE_PROPERTIES_BEGIN(1)
-PLAYABLE_PROPERTY(Count, int, getCount, setCount)
-PLAYABLE_PROPERTIES_END
-PLAYABLE_MMETHODS_BEGIN(2)
-PLAYABLE_MMETHOD(void, voidMethodInt, int)
-PLAYABLE_MMETHOD(std::string, stringMethodStringInt, std::string, int)
-PLAYABLE_MMETHODS_END
-PLAYABLE_ClASS_END(test, NativeClass)
-
-/// <summary>
-/// Test case 3: AOP feature on derived class
-/// </summary>
-ASPECT_VCLASS_BEGIN(pj::playable::PlayableAspect, test::TestDerivedClass)
-ASPECT_VMETHOD(void, print, std::string, int)
-ASPECT_VCLASS_END
+#include "TestAspectable.h"
+#include "TestReflectable.h"
+#include "TestPlayable.h"
+#include "Playable.h"
 
 int main()
 {
-    test::TestDerivedClass testDerivedClass;
-    aop::AspectProxy<test::TestDerivedClass, pj::playable::PlayableAspect> proxy(testDerivedClass);
-    proxy.print("xyz_", 3);
+    // Aspectable
+    TestAspectableClass testClass;
+    auto strResult = testClass.invoke(&TestAspectableClass::stringMethodIntString, 3, "xyz_");
+    auto doubleResult = testClass.invoke(&TestAspectableClass::doubleMethodInt, 10);
+    testClass.invoke(&TestAspectableClass::voidMethodInt, 1);
 
-    pj::player::Player player;
-    const char* unitTest = "D:\\Projects\\PlayableJournal\\Test\\UnitTest\\unitTest.js";
+    playable::Playable::type("A")
+        .constructor<A>()
+        .method("voidMethod", &A::voidMethod).playable<&A::voidMethod>()
+        .end();
+        //.method("intMethodIntString", &A::intMethodIntString).makePlayable<&A::intMethodIntString>();
+
+
+    //Playable playable;
+    //playable.method("voidMethod", &A::voidMethod);
+    //auto function = std::bind(
+    //    &TestAspectableClass::invoke<decltype(&TestAspectableClass::stringMethodIntString), int, std::string>,
+    //    testClass,
+    //    &TestAspectableClass::stringMethodIntString,
+    //    3, "xyz_");
+
+    aspectable::Aspectable<TestAspect_1, TestAspect_2>::invoke(&testAspectableMethods::stringMethodIntString, 2, "xyz_");
+    
+    // Playable
+    playable::Player player;
+    const char* unitTest = "D:\\Projects\\PlayableJournal\\Test\\UnitTest\\testPlayable.js";
     player.play(unitTest);
 }
 

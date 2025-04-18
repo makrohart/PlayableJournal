@@ -33,22 +33,13 @@
     <ClInclude Include="Playable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayableClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PlayableManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayableMethod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Journalable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayableAccesser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
@@ -70,6 +61,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlayableEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayableType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayableMethod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -96,6 +93,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayableType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

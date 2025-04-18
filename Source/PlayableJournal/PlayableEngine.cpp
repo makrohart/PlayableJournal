@@ -1,7 +1,9 @@
 #include "pch.h"
-#include "PlayableEngine.h"
 
-pj::playable::PlayableEngine::PlayableEngine()
+#include "PlayableEngine.h"
+#include "PlayableType.h"
+
+playable::PlayableEngine::PlayableEngine()
 {
 	initializeV8();
 
@@ -11,7 +13,7 @@ pj::playable::PlayableEngine::PlayableEngine()
 	m_pIsolate = v8::Isolate::New(m_createParams);
 }
 
-pj::playable::PlayableEngine::~PlayableEngine()
+playable::PlayableEngine::~PlayableEngine()
 {
 	m_pIsolate->Dispose();
 	v8::V8::Dispose();
@@ -19,7 +21,7 @@ pj::playable::PlayableEngine::~PlayableEngine()
 	delete m_createParams.array_buffer_allocator;
 }
 
-int pj::playable::PlayableEngine::compileAndExecute(const char* scriptPath)
+int playable::PlayableEngine::compileAndExecute(const char* scriptPath)
 {
 	v8::Isolate::Scope isolate_scope(m_pIsolate);
 	v8::Global<v8::Context> context = bindJS2Native(m_pIsolate);
@@ -40,7 +42,7 @@ int pj::playable::PlayableEngine::compileAndExecute(const char* scriptPath)
 	if (!success) return 1;
 }
 
-void pj::playable::PlayableEngine::initializeV8()
+void playable::PlayableEngine::initializeV8()
 {
 	// icu_data_file, natives_blob.bin and snapshot_blob.bin 
 	// locate under the same directory with build directory.
@@ -54,49 +56,61 @@ void pj::playable::PlayableEngine::initializeV8()
 		pj::journal::FATAL("Failed to initialize v8");
 }
 
-v8::Global<v8::Context> pj::playable::PlayableEngine::bindJS2Native(v8::Isolate* pIsolate)
+v8::Global<v8::Context> playable::PlayableEngine::bindJS2Native(v8::Isolate* pIsolate)
 {
 	v8::HandleScope handle_scope(pIsolate);
 
 	// Create a template for the global object.
 	v8::Local<v8::ObjectTemplate> globalTemplate = v8::ObjectTemplate::New(pIsolate);
 
-	pj::playable::PlayableManager* pPlayableManager = pj::playable::PlayableManager::getInstance();
+	playable::PlayableManager* pPlayableManager = playable::PlayableManager::getInstance();
 
-	// Bind gloable method
-	for (const auto& playableMethod : pPlayableManager->getPlayableMethods())
-	{
-		v8::Local<v8::FunctionTemplate> functionTemplate = v8::FunctionTemplate::New(pIsolate, playableMethod.getMethod());
-		globalTemplate->Set(pIsolate, playableMethod.getName().c_str(), functionTemplate);
-	}
+	//// Bind gloable method
+	//for (const auto& playableMethod : pPlayableManager->getPlayableMethods())
+	//{
+	//	v8::Local<v8::FunctionTemplate> functionTemplate = v8::FunctionTemplate::New(pIsolate, playableMethod.getMethod());
+	//	globalTemplate->Set(pIsolate, playableMethod.getName().c_str(), functionTemplate);
+	//}
 
 	// Bind Class
-	for (const auto& playableClass : pPlayableManager->getPlayableClasses())
+	for (const auto& types : pPlayableManager->getTypes())
 	{
-		const char* className = playableClass.getName().c_str();
+		const std::string className = types->getName();
+		const auto& methods = types->getMethods();
+
 		// Bind constructor
-		v8::Local<v8::FunctionTemplate> classTemplate = v8::FunctionTemplate::New(pIsolate, playableClass.getConstructor());
-		classTemplate->SetClassName(v8::String::NewFromUtf8(pIsolate, className));
-		globalTemplate->Set(pIsolate, className, classTemplate);
+		const auto& it = methods.find(className);
+		if (it == methods.cend())
+			continue;
+
+		v8::Local<v8::FunctionTemplate> classTemplate = v8::FunctionTemplate::New(pIsolate, it->second);
+		classTemplate->SetClassName(v8::String::NewFromUtf8(pIsolate, className.c_str()));
+		globalTemplate->Set(pIsolate, className.c_str(), classTemplate);
 		v8::Local<v8::ObjectTemplate> classPrototype = classTemplate->PrototypeTemplate();
 
 		// Bind methods
-		for (auto& method : playableClass.getMethods())
-			classPrototype->Set(pIsolate, method.getName().c_str(), v8::FunctionTemplate::New(pIsolate, method.getMethod()));
+		for (const auto& [methodName, method] : methods)
+		{
+			if (methodName == className)
+				continue;
+
+			classPrototype->Set(pIsolate, methodName.c_str(), v8::FunctionTemplate::New(pIsolate, method));
+		}
+			
 
 		v8::Local<v8::ObjectTemplate> classInstance = classTemplate->InstanceTemplate();
 		classInstance->SetInternalFieldCount(1);
 
 		// Bind getters and setters
-		for (auto& accesser : playableClass.getAccessers())
-			classInstance->SetNativeDataProperty(v8::String::NewFromUtf8(pIsolate, accesser.getName().c_str()), accesser.getGetter(), accesser.getSetter());
+		for (const auto& [propertyName, accessor] : types->getAccessors())
+			classInstance->SetNativeDataProperty(v8::String::NewFromUtf8(pIsolate, propertyName.c_str()), accessor.first, accessor.second);
 	}
 
 	v8::Local<v8::Context> context = v8::Context::New(pIsolate, nullptr, globalTemplate);
 	return v8::Global<v8::Context>(pIsolate, context);
 }
 
-bool pj::playable::PlayableEngine::compileAndExecute(v8::Local<v8::String> source, v8::Local<v8::Value> name, bool print_result, bool report_exceptions)
+bool playable::PlayableEngine::compileAndExecute(v8::Local<v8::String> source, v8::Local<v8::Value> name, bool print_result, bool report_exceptions)
 {
 	v8::HandleScope handle_scope(m_pIsolate);
 	v8::TryCatch try_catch(m_pIsolate);
@@ -137,7 +151,7 @@ bool pj::playable::PlayableEngine::compileAndExecute(v8::Local<v8::String> sourc
 	}
 }
 
-void pj::playable::PlayableEngine::reportException(v8::TryCatch* try_catch)
+void playable::PlayableEngine::reportException(v8::TryCatch* try_catch)
 {
 	v8::HandleScope handle_scope(m_pIsolate);
 	v8::String::Utf8Value exception(m_pIsolate, try_catch->Exception());

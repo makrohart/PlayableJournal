@@ -3,20 +3,17 @@
 
 #include "PlayableEngine.h"
 
-namespace pj
+namespace playable
 {
-	namespace player
+	class PLAYABLEJOURNAL_API Player
 	{
-		class PLAYABLEJOURNAL_API Player
-		{
-		public:
-			Player() = default;
-			~Player() = default;
+	public:
+		Player() = default;
+		~Player() = default;
 
-			void play(const char* pJournalPath);
+		void play(const char* pJournalPath);
 
-		private:
-			pj::playable::PlayableEngine m_playableEngine;
-		};
-	}
+	private:
+		PlayableEngine m_playableEngine;
+	};
 }

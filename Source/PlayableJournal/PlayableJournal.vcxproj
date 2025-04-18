@@ -124,7 +124,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
-      <AdditionalIncludeDirectories>$(SolutionDir)packages\v8-v140-x64.7.4.288.11\include;$(SolutionDir)..\ThirdParties\nlohmann;$(SolutionDir)base;$(SolutionDir)aop;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\v8-v140-x64.7.4.288.11\include;$(SolutionDir)..\ThirdParties\nlohmann;$(SolutionDir)base;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -150,7 +150,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
-      <AdditionalIncludeDirectories>$(SolutionDir)packages\v8-v140-x64.7.4.288.11\include;$(SolutionDir)..\ThirdParties\nlohmann;$(SolutionDir)base;$(SolutionDir)aop;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\v8-v140-x64.7.4.288.11\include;$(SolutionDir)..\ThirdParties\nlohmann;$(SolutionDir)base;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -174,16 +174,15 @@
     <ClInclude Include="Journalable.h" />
     <ClInclude Include="JournalAspect.h" />
     <ClInclude Include="JournalistManager.h" />
+    <ClInclude Include="PlayableMethod.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Playable.h" />
-    <ClInclude Include="PlayableAccesser.h" />
     <ClInclude Include="PlayableAspect.h" />
-    <ClInclude Include="PlayableClass.h" />
     <ClInclude Include="PlayableEngine.h" />
     <ClInclude Include="PlayableManager.h" />
-    <ClInclude Include="PlayableMethod.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="PlayableType.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="ValueUtils.h" />
   </ItemGroup>
@@ -201,6 +200,7 @@
     <ClCompile Include="PlayableEngine.cpp" />
     <ClCompile Include="PlayableManager.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayableType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="IJournalist.h" />

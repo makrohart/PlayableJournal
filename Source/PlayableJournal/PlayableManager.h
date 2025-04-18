@@ -1,41 +1,29 @@
 #pragma once
 #include "DllExport.h"
 
-#include "PlayableClass.h"
 #include "Singleton.h"
+#include "PlayableType.h"
+#include <vector>
 
-namespace pj
+namespace playable
 {
-	namespace playable
+
+	class PlayableManager final
 	{
-		class PlayableManager final
+		DECLARE_SINGLETON_DEFAULT(PlayableManager)
+
+	public:
+		void add(PlayableType* pType)
 		{
-			DECLARE_SINGLETON_DEFAULT(PlayableManager)
+			m_types.emplace_back(pType);
+		}
 
-		public:
-			PLAYABLEJOURNAL_API void add(const PlayableClass& playableClass)
-			{
-				m_playableClasses.push_back(playableClass);
-			}
+		const std::vector<std::unique_ptr<playable::PlayableType>>& getTypes()
+		{
+			return m_types;
+		}
 
-			PLAYABLEJOURNAL_API void add(const PlayableMethod& method)
-			{
-				m_methods.push_back(method);
-			}
-
-			std::vector<PlayableClass>& getPlayableClasses()
-			{
-				return m_playableClasses;
-			}
-
-			std::vector<PlayableMethod>& getPlayableMethods()
-			{
-				return m_methods;
-			}
-
-		private:
-			std::vector<PlayableClass> m_playableClasses;
-			std::vector<PlayableMethod> m_methods;
-		};
-	}
+	private:
+		std::vector<std::unique_ptr<playable::PlayableType>> m_types;
+	};
 }

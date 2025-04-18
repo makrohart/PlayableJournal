@@ -15,13 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Aspect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MethodInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectInfo.h">
+    <ClInclude Include="Aspectable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

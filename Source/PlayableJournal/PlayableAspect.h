@@ -1,47 +1,66 @@
 #pragma once
 
-#include "Aspect.h"
-#include "format"
+#include "aspectable/Aspectable.h"
+#include <format>
+#include "reflectable/GMethodManager.h"
 #include "Journal.h"
+#include "reflectable/Reflectable.h"
+#include <string>
 #include "Utils.h"
 
 namespace pj
 {
 	namespace playable
 	{
-		class PlayableAspect : public aop::Aspect<PlayableAspect>
+		struct PlayableAspect
 		{
-		public:
-
-			virtual void preConstructor(const aop::ObjectInfo& objectInfo) override
-			{
-				const std::string className = objectInfo.getInstanceName();
-				const int id = objectInfo.getId();
-				const std::string instanceName = pj::utils::toLower(className) + "_" + std::to_string(id);
-				pj::journal::PLAYABLE(instanceName.c_str(), " = new ", className.c_str(), "()", ";");
-			}
-
-			template<typename R, typename F, typename... Args>
-			static R invoke(const aop::ObjectInfo* pObjectInfo, const aop::MethodInfo& methodInfo, const F& func, Args&&... args)
+			template<typename T, typename F, typename... Args>
+			void preInvoke(F T::* pMMethod, Args&&... args)
 			{
 				std::string argsStr = "";
 				if constexpr (sizeof...(Args) != 0)
 					argsStr = pj::utils::toStringFromArgs(", ", std::forward<Args>(args)...);
 
-				if (pObjectInfo)
+				reflectable::Type* pType = reflectable::Type::get<T>();
+				if (!pType)
+					return;
+				const std::string className = pType->getName();
+				auto pObject = static_cast<T*>(this);
+				const int id = pObject->getId();
+				const std::string instanceName = pj::utils::toLower(className) + "_" + std::to_string(id);
+				
+				// If constructor is called
+				if (const auto methodName = pType->getMethodName(pMMethod); methodName == "")
 				{
-					const std::string className = pObjectInfo->getInstanceName();
-					const int id = pObjectInfo->getId();
-					const std::string instanceName = pj::utils::toLower(className) + "_" + std::to_string(id);
-					pj::journal::PLAYABLE(instanceName.c_str(), ".", methodInfo.getMethodName().c_str(), "(", argsStr.c_str(), ");");
+					pj::journal::PLAYABLE(instanceName.c_str(), " = new ", className.c_str(), "()", ";");
 				}
 				else
 				{
-					pj::journal::PLAYABLE(methodInfo.getMethodName().c_str(), "(", argsStr.c_str(), ");");
-				}
+					pj::journal::PLAYABLE(instanceName.c_str(), ".", methodName.c_str(), "(", argsStr.c_str(), ");");
+				}			
+			}
 
-				return func(std::forward<Args>(args)...);
+			template<typename T, typename F, typename... Args>
+			void postInvoke(F T::* /*pMMethod*/, Args&&... /*args*/)
+			{
+			}
+
+			template<typename F, typename... Args>
+			static void preInvoke(F&& method, Args&&... args)
+			{
+				std::string argsStr = "";
+				if constexpr (sizeof...(Args) != 0)
+					argsStr = pj::utils::toStringFromArgs(", ", std::forward<Args>(args)...);
+
+				const std::string methodName = reflectable::GMethodManager::getInstance()->getMethodName(method);
+				pj::journal::PLAYABLE(methodName.c_str(), "(", argsStr.c_str(), ");");
+			}
+
+			template<typename F, typename... Args>
+			static void postInvoke(F&& /*method*/, Args&&... /*args*/)
+			{
 			}
 		};
+
 	}
 }

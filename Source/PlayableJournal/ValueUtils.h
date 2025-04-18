@@ -9,24 +9,24 @@ namespace pj
     namespace utils
     {
         template<typename T>
-        v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const T& value);
+        inline v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const T& value);
 
         template<>
-        v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const std::string& value)
+        inline v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const std::string& value)
         {
             v8::EscapableHandleScope handle_scope(pIsolate);
             return handle_scope.Escape(v8::String::NewFromUtf8(pIsolate, value.c_str()));
         }
 
         template<>
-        v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const int& value)
+        inline v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const int& value)
         {
             v8::EscapableHandleScope handle_scope(pIsolate);
             return handle_scope.Escape(v8::Integer::New(pIsolate, value));
         }
 
         template<typename T>
-        v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const std::vector<T>& values)
+        inline v8::Local<v8::Value> toJSFromNative(v8::Isolate* pIsolate, const std::vector<T>& values)
         {         
             v8::EscapableHandleScope handle_scope(pIsolate);
             v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
@@ -40,16 +40,16 @@ namespace pj
         }
 
         template<typename T>
-        T toNativeFromJS(v8::Isolate* pIsolate, v8::Local<v8::Value> value);
+        inline T toNativeFromJS(v8::Isolate* pIsolate, v8::Local<v8::Value> value);
 
         template<>
-        int toNativeFromJS<int>(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
+        inline int toNativeFromJS<int>(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
         {
             return value.As<v8::Int32>()->Value();
         }
 
         template<>
-        const char* toNativeFromJS<const char*>(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
+        inline const char* toNativeFromJS<const char*>(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
         {
             v8::Local<v8::String> v8Str = value.As<v8::String>();
             const int size = v8Str->Utf8Length(pIsolate);
@@ -59,7 +59,7 @@ namespace pj
         }
 
         template<>
-        const char toNativeFromJS<const char>(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
+        inline const char toNativeFromJS<const char>(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
         {
             v8::Local<v8::String> v8Str = value.As<v8::String>();
             char* pStr = new char[2] {0};
@@ -68,7 +68,7 @@ namespace pj
         }
 
         template<>
-        std::string toNativeFromJS<std::string>(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
+        inline std::string toNativeFromJS<std::string>(v8::Isolate* pIsolate, v8::Local<v8::Value> value)
         {
             v8::Local<v8::String> v8Str = value.As<v8::String>();
             const int size = v8Str->Utf8Length(pIsolate);
